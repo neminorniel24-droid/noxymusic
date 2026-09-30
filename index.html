@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NoxyMusic</title>
+<style>
+  :root { --bg:#0b0b12; --fg:#e8e8f0; --accent:#8b5cf6; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,sans-serif; display:flex; flex-direction:column; align-items:center; gap:12px; padding:16px; }
+  h1 { margin:0; font-size:1.4rem; }
+  #stage { position:relative; width:min(100%,960px); aspect-ratio:4/3; background:#000; border-radius:12px; overflow:hidden; }
+  video, canvas { position:absolute; inset:0; width:100%; height:100%; transform:scaleX(-1); object-fit:cover; }
+  .bar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center; }
+  button, select { background:#1c1c2b; color:var(--fg); border:1px solid #33334d; padding:8px 14px; border-radius:8px; font-size:.95rem; cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); }
+  button.rec { background:#dc2626; border-color:#dc2626; }
+  label { display:flex; align-items:center; gap:6px; font-size:.9rem; }
+  #info { font-size:.9rem; opacity:.8; min-height:1.2em; }
+</style>
+</head>
+<body>
+<h1>NoxyMusic</h1>
+<div id="stage"><video id="video" playsinline muted></video><canvas id="overlay"></canvas></div>
+<div class="bar">
+  <button id="start" class="primary">Start camera</button>
+  <select id="scale">
+    <option value="0,2,4,5,7,9,11">Major</option>
+    <option value="0,2,3,5,7,8,10">Minor</option>
+    <option value="0,2,4,7,9" selected>Pentatonic</option>
+    <option value="0,3,5,6,7,10">Blues</option>
+  </select>
+  <select id="wave">
+    <option>sine</option><option selected>triangle</option><option>sawtooth</option><option>square</option>
+  </select>
+  <label><input type="checkbox" id="withFace" checked> Record with face</label>
+  <button id="rec" disabled>Record</button>
+</div>
+<div id="info">Right hand height = pitch · Left hand height = volume</div>
+
+<script type="module">
+import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+
+const $ = id => document.getElementById(id);
+const video = $("video"), canvas = $("overlay"), ctx = canvas.getContext("2d");
+let landmarker, audioCtx, osc, gain, dest, recorder, chunks = [], stream, running = false;
+
+const ROOT = 48;       // C3
+const OCTAVES = 3;
+
+function noteFromHeight(y) {            // y: 0 (top) .. 1 (bottom)
+  const scale = $("scale").value.split(",").map(Number);
+  const steps = scale.length * OCTAVES;
+  const idx = Math.min(steps - 1, Math.max(0, Math.floor((1 - y) * steps)));
+  const oct = Math.floor(idx / scale.length);
+  const midi = ROOT + oct * 12 + scale[idx % scale.length];
+  return midi;
+}
+const midiToHz = m => 440 * Math.pow(2, (m - 69) / 12);
+const NAMES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+
+function initAudio() {
+  audioCtx = new AudioContext();
+  osc = audioCtx.createOscillator();
+  gain = audioCtx.createGain();
+  gain.gain.value = 0;
+  osc.type = $("wave").value;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  dest = audioCtx.createMediaStreamDestination();
+  gain.connect(dest);
+  osc.start();
+}
+$("wave").onchange = () => { if (osc) osc.type = $("wave").value; };
+
+async function start() {
+  $("start").disabled = true;
+  $("info").textContent = "Loading hand tracking…";
+  const fileset = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  landmarker = await HandLandmarker.createFromOptions(fileset, {
+    baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task" },
+    runningMode: "VIDEO", numHands: 2
+  });
+  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 960, height: 720 }, audio: false });
+  video.srcObject = stream;
+  await video.play();
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  initAudio();
+  running = true;
+  $("rec").disabled = false;
+  $("info").textContent = "Show your hands!";
+  loop();
+}
+
+function loop() {
+  if (!running) return;
+  const res = landmarker.detectForVideo(video, performance.now());
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  let pitch = null, vol = null;
+
+  res.landmarks.forEach((lm, i) => {
+    // MediaPipe labels assume a mirrored image; flip so it matches what the user sees
+    const label = res.handedness[i][0].categoryName === "Left" ? "Right" : "Left";
+    const palm = lm[9];
+    ctx.fillStyle = label === "Right" ? "#8b5cf6" : "#22d3ee";
+    lm.forEach(p => { ctx.beginPath(); ctx.arc(p.x * canvas.width, p.y * canvas.height, 5, 0, 7); ctx.fill(); });
+    if (label === "Right") pitch = palm.y; else vol = 1 - palm.y;
+  });
+
+  const t = audioCtx.currentTime;
+  if (pitch !== null) {
+    const midi = noteFromHeight(pitch);
+    osc.frequency.setTargetAtTime(midiToHz(midi), t, 0.02);
+    const v = vol !== null ? Math.min(1, Math.max(0, vol)) * 0.5 : 0.25;
+    gain.gain.setTargetAtTime(v, t, 0.05);
+    $("info").textContent = `Note: ${NAMES[midi % 12]}${Math.floor(midi / 12) - 1}`;
+  } else {
+    gain.gain.setTargetAtTime(0, t, 0.08);
+    $("info").textContent = "Show your right hand to play";
+  }
+  requestAnimationFrame(loop);
+}
+
+function toggleRecord() {
+  if (recorder && recorder.state === "recording") { recorder.stop(); return; }
+  const tracks = [...dest.stream.getAudioTracks()];
+  if ($("withFace").checked) tracks.push(...stream.getVideoTracks());
+  const rs = new MediaStream(tracks);
+  const isVideo = $("withFace").checked;
+  const mime = isVideo ? "video/webm" : "audio/webm";
+  recorder = new MediaRecorder(rs, { mimeType: mime });
+  chunks = [];
+  recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
+  recorder.onstop = () => {
+    const url = URL.createObjectURL(new Blob(chunks, { type: mime }));
+    const a = document.createElement("a");
+    a.href = url; a.download = `noxymusic-${Date.now()}.webm`; a.click();
+    $("rec").textContent = "Record"; $("rec").classList.remove("rec");
+  };
+  recorder.start();
+  $("rec").textContent = "Stop & save"; $("rec").classList.add("rec");
+}
+
+$("start").onclick = () => start().catch(e => { $("info").textContent = "Error: " + e.message; $("start").disabled = false; });
+$("rec").onclick = toggleRecord;
+</script>
+</body>
+</html>
