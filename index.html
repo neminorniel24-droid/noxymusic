@@ -1,148 +1,280 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NoxyMusic</title>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NoxyMusic – play music with your hands</title>
 <style>
-  :root { --bg:#0b0b12; --fg:#e8e8f0; --accent:#8b5cf6; }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,sans-serif; display:flex; flex-direction:column; align-items:center; gap:12px; padding:16px; }
-  h1 { margin:0; font-size:1.4rem; }
-  #stage { position:relative; width:min(100%,960px); aspect-ratio:4/3; background:#000; border-radius:12px; overflow:hidden; }
-  video, canvas { position:absolute; inset:0; width:100%; height:100%; transform:scaleX(-1); object-fit:cover; }
-  .bar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center; }
-  button, select { background:#1c1c2b; color:var(--fg); border:1px solid #33334d; padding:8px 14px; border-radius:8px; font-size:.95rem; cursor:pointer; }
-  button.primary { background:var(--accent); border-color:var(--accent); }
-  button.rec { background:#dc2626; border-color:#dc2626; }
-  label { display:flex; align-items:center; gap:6px; font-size:.9rem; }
-  #info { font-size:.9rem; opacity:.8; min-height:1.2em; }
-</style>
-</head>
-<body>
-<h1>NoxyMusic</h1>
-<div id="stage"><video id="video" playsinline muted></video><canvas id="overlay"></canvas></div>
-<div class="bar">
-  <button id="start" class="primary">Start camera</button>
-  <select id="scale">
-    <option value="0,2,4,5,7,9,11">Major</option>
-    <option value="0,2,3,5,7,8,10">Minor</option>
-    <option value="0,2,4,7,9" selected>Pentatonic</option>
-    <option value="0,3,5,6,7,10">Blues</option>
-  </select>
-  <select id="wave">
-    <option>sine</option><option selected>triangle</option><option>sawtooth</option><option>square</option>
-  </select>
-  <label><input type="checkbox" id="withFace" checked> Record with face</label>
-  <button id="rec" disabled>Record</button>
-</div>
-<div id="info">Right hand height = pitch · Left hand height = volume</div>
-
+:root{--bg:#0a0a12;--card:#14141f;--line:#26263a;--fg:#ececf5;--dim:#9a9ab5;--a:#8b5cf6;--b:#22d3ee}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:radial-gradient(1200px 600px at 20% -10%,#1b1440,var(--bg));color:var(--fg);font-family:system-ui,sans-serif;min-height:100vh}
+header{padding:14px 20px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+header h1{margin:0;font-size:1.5rem;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+header span{color:var(--dim);font-size:.9rem}
+main{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:16px;padding:0 20px 24px;max-width:1300px;margin:auto}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+#stage{position:relative;background:#000;border-radius:16px;overflow:hidden;aspect-ratio:4/3;width:min(100%,calc(72vh*4/3));margin:0 auto;border:1px solid var(--line)}
+video,canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+video{transform:scaleX(-1);opacity:.85}
+#note{position:absolute;left:14px;top:10px;font-size:2.4rem;font-weight:700;text-shadow:0 0 18px var(--a)}
+#intro{position:absolute;inset:0;background:rgba(10,10,18,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:10px}
+#intro h2{margin:0;font-size:1.6rem}#intro ol{text-align:left;color:var(--dim);line-height:1.7;margin:6px 0 10px;padding-left:20px}
+#err{color:#fca5a5;font-size:.9rem;max-width:380px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.card h3{margin:0 0 8px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:7px 0;font-size:.9rem}
+.row>select,.row>input[type=range]{width:55%}
+select,button,.btn{background:#1d1d2e;color:var(--fg);border:1px solid #33334d;padding:8px 12px;border-radius:9px;font-size:.92rem;cursor:pointer}
+button.main,.main{background:linear-gradient(90deg,var(--a),#6d5cf6);border:0;font-weight:600;padding:11px 22px;font-size:1rem}
+#rec{width:100%;margin-top:6px}#rec.live{background:#dc2626}
+button:disabled{opacity:.5;cursor:default}.btn{display:inline-block}
+.small{font-size:.82rem;color:var(--dim);line-height:1.4}
+#result video,#result audio{width:100%;margin-top:8px;border-radius:8px;position:static;transform:none}
+#result a{display:block;text-align:center;margin-top:8px;text-decoration:none}
+.decks{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:700px){.decks{grid-template-columns:1fr}}
+.fl{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:10px 0;font-size:.9rem}
+.pads{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
+.pad{padding:14px 6px;font-size:.95rem}.pad:active{background:var(--a)}.pad i{font-style:normal;opacity:.5;font-size:.75rem}
+#xf{flex:1;min-width:140px}
+</style></head><body>
+<header><h1>NoxyMusic</h1><span>Make music with your hands. No experience needed.</span></header>
+<main>
+<section>
+ <div id="stage"><video id="video" playsinline muted></video><canvas id="cv"></canvas><div id="note"></div>
+  <div id="intro"><h2>Play music in the air</h2>
+   <ol><li>Allow your camera</li><li>Raise your <b>right hand</b> and move it up and down to change the note</li><li>Use your <b>left hand</b> for volume</li><li>Upload a song and every note will fit it</li></ol>
+   <button id="go" class="main">Start camera</button><div id="err"></div>
+   <div class="small">Your video stays on your device.</div></div></div>
+</section>
+<aside>
+ <div class="card"><h3>Your sound</h3>
+  <div class="row">Instrument<select id="inst"></select></div>
+  <div class="row">Key<select id="key"></select></div>
+  <div class="row">Scale<select id="scale"></select></div>
+  <div class="row">Play style<select id="mode"><option value="hold">Hand up = sound</option><option value="pinch">Pinch to play</option></select></div>
+  <div class="row">Reverb<input id="rev" type="range" min="0" max="1" step=".05" value=".3"></div>
+  <div class="row">Echo<input id="echo" type="range" min="0" max="1" step=".05" value=".15"></div></div>
+ <div class="card"><h3>Deck A · Backing song</h3>
+  <label class="btn main" for="file">Upload a song</label><input id="file" type="file" accept="audio/*" hidden>
+  <p id="songStatus" class="small">I'll find its key, play it, and match your notes to it.</p>
+  <div class="row"><button id="songBtn" disabled>Play</button><input id="songVol" type="range" min="0" max="1" step=".05" value=".7" style="width:55%"></div>
+  <audio id="song" loop></audio></div>
+ <div class="card"><h3>Record</h3>
+  <div class="row"><label><input type="checkbox" id="face" checked> Include my face</label></div>
+  <div class="row"><label><input type="checkbox" id="mic"> Include my microphone</label></div>
+  <button id="rec" class="main" disabled>Record</button><div id="recInfo" class="small"></div><div id="result"></div></div>
+</aside>
+<section class="card" id="dj" style="grid-column:1/-1"><h3>DJ mode · two decks, transitions and effects</h3>
+ <div class="decks">
+  <div><b>Deck A</b><div class="small">Upload in the Deck A card on the right.</div></div>
+  <div><b>Deck B</b> <label class="btn" for="fileB">Upload song</label><input id="fileB" type="file" accept="audio/*" hidden> <button id="btnB" disabled>Play</button>
+   <div id="nameB" class="small"></div><div class="row">Volume<input id="volB" type="range" min="0" max="1" step=".05" value=".7" style="width:60%"></div></div>
+ </div>
+ <div class="fl"><b>A</b><input id="xf" type="range" min="0" max="1" step=".01" value="0"><b>B</b></div>
+ <div class="fl"><select id="tr"><option value="fade">Smooth crossfade</option><option value="sweep">Filter sweep out</option><option value="rise">Build-up in</option><option value="brake">Vinyl brake</option><option value="cut">Hard cut</option></select>
+  Length <input id="trLen" type="range" min="2" max="16" step="1" value="8"><span id="trv">8s</span><button id="goT" class="main">Transition</button><span id="djMsg" class="small"></span></div>
+ <h3>Sound effects <span class="small">(keys 1-8)</span></h3>
+ <div class="pads">
+  <button class="pad" data-fx="horn" data-key="1">&#128239; Air horn <i>1</i></button><button class="pad" data-fx="siren" data-key="2">&#128680; Siren <i>2</i></button>
+  <button class="pad" data-fx="laser" data-key="3">&#128299; Laser <i>3</i></button><button class="pad" data-fx="scratch" data-key="4">&#128191; Scratch <i>4</i></button>
+  <button class="pad" data-fx="boing" data-key="5">&#129680; Boing <i>5</i></button><button class="pad" data-fx="drop" data-key="6">&#128163; Bass drop <i>6</i></button>
+  <button class="pad" data-fx="applause" data-key="7">&#128079; Applause <i>7</i></button>
+  <button class="pad" id="chip" data-key="8">&#128063; Chipmunk <i>hold</i></button><button class="pad" id="demon">&#128121; Demon <i>hold</i></button>
+ </div></section></main>
 <script type="module">
-import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+import {HandLandmarker,FilesetResolver} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+const $=id=>document.getElementById(id);
+const SCALES={"Major":[0,2,4,5,7,9,11],"Minor":[0,2,3,5,7,8,10],"Pentatonic (easy)":[0,2,4,7,9],"Minor pentatonic":[0,3,5,7,10],"Blues":[0,3,5,6,7,10]};
+const PRE={"Theremin":{t:"sine",c:6000,d:0},"Warm synth":{t:"sawtooth",c:1800,d:8},"Soft pad":{t:"triangle",c:1200,d:12},"Bright lead":{t:"square",c:3500,d:6}};
+const NAMES="C C# D D# E F F# G G# A A# B".split(" "),OCT=3,BASE=48;
+const fill=(id,a)=>a.forEach(([v,t])=>$(id).add(new Option(t,v)));
+fill("inst",Object.keys(PRE).map(k=>[k,k]));fill("key",NAMES.map((n,i)=>[i,n]));fill("scale",Object.keys(SCALES).map(k=>[k,k]));
+$("scale").value="Pentatonic (easy)";
+let djOut,fxG,filtA,xA,songGB,filtB,xB,ac,o1,o2,filt,vg,master,rec,dry,wet,ew,songG,micG,micStream,lm,stream,running=false,lastNote="";
+const video=$("video"),cv=$("cv"),ctx=cv.getContext("2d");
 
-const $ = id => document.getElementById(id);
-const video = $("video"), canvas = $("overlay"), ctx = canvas.getContext("2d");
-let landmarker, audioCtx, osc, gain, dest, recorder, chunks = [], stream, running = false;
-
-const ROOT = 48;       // C3
-const OCTAVES = 3;
-
-function noteFromHeight(y) {            // y: 0 (top) .. 1 (bottom)
-  const scale = $("scale").value.split(",").map(Number);
-  const steps = scale.length * OCTAVES;
-  const idx = Math.min(steps - 1, Math.max(0, Math.floor((1 - y) * steps)));
-  const oct = Math.floor(idx / scale.length);
-  const midi = ROOT + oct * 12 + scale[idx % scale.length];
-  return midi;
+function impulse(sec){const n=ac.sampleRate*sec,b=ac.createBuffer(2,n,ac.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,2.5)}return b}
+function ensureAudio(){
+ if(ac){if(ac.state!=="running")ac.resume();return}
+ ac=new AudioContext();master=ac.createGain();master.gain.value=.9;rec=ac.createMediaStreamDestination();
+ master.connect(ac.destination);master.connect(rec);
+ o1=ac.createOscillator();o2=ac.createOscillator();filt=ac.createBiquadFilter();filt.type="lowpass";vg=ac.createGain();vg.gain.value=0;
+ o1.connect(filt);o2.connect(filt);filt.connect(vg);
+ dry=ac.createGain();vg.connect(dry);dry.connect(master);
+ const cvb=ac.createConvolver();cvb.buffer=impulse(2.2);wet=ac.createGain();vg.connect(cvb);cvb.connect(wet);wet.connect(master);
+ const dl=ac.createDelay(1),fb=ac.createGain();dl.delayTime.value=.32;fb.gain.value=.4;ew=ac.createGain();
+ vg.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(ew);ew.connect(master);
+ songG=ac.createGain();songG.gain.value=+$("songVol").value;
+ djOut=ac.createGain();djOut.connect(ac.destination);djOut.connect(rec);
+ fxG=ac.createGain();fxG.gain.value=.7;fxG.connect(djOut);
+ const mk=(el,g)=>{const sr=ac.createMediaElementSource($(el)),f=ac.createBiquadFilter(),x=ac.createGain();f.type="lowpass";f.frequency.value=20000;sr.connect(g);g.connect(f);f.connect(x);x.connect(djOut);return{f,x}};
+ const dA=mk("song",songG);filtA=dA.f;xA=dA.x;
+ songGB=ac.createGain();songGB.gain.value=+$("volB").value;const dB=mk("songB",songGB);filtB=dB.f;xB=dB.x;
+ xfade(+$("xf").value);
+ micG=ac.createGain();micG.gain.value=0;micG.connect(rec);
+ o1.start();o2.start();preset();fx();
 }
-const midiToHz = m => 440 * Math.pow(2, (m - 69) / 12);
-const NAMES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+function preset(){const p=PRE[$("inst").value];o1.type=o2.type=p.t;o2.detune.value=p.d;filt.frequency.value=p.c}
+function fx(){wet.gain.value=$("rev").value*.9;ew.gain.value=$("echo").value*.6}
+$("inst").onchange=()=>ac&&preset();$("rev").oninput=$("echo").oninput=()=>ac&&fx();
+$("songVol").oninput=()=>songG&&(songG.gain.value=+$("songVol").value);
 
-function initAudio() {
-  audioCtx = new AudioContext();
-  osc = audioCtx.createOscillator();
-  gain = audioCtx.createGain();
-  gain.gain.value = 0;
-  osc.type = $("wave").value;
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  dest = audioCtx.createMediaStreamDestination();
-  gain.connect(dest);
-  osc.start();
+const sc=()=>SCALES[$("scale").value],root=()=>+$("key").value;
+const idxFromT=t=>{const n=sc().length*OCT;return Math.min(n-1,Math.max(0,Math.floor((1-t)*n)))};
+const midi=i=>{const s=sc();return BASE+root()+Math.floor(i/s.length)*12+s[i%s.length]};
+const hz=m=>440*Math.pow(2,(m-69)/12),nm=m=>NAMES[m%12]+(Math.floor(m/12)-1);
+const norm=y=>Math.min(1,Math.max(0,(y-.12)/.76));
+
+function ladder(cur){
+ const s=sc(),n=s.length*OCT,W=cv.width,H=cv.height,top=H*.12,band=H*.76/n;
+ ctx.textAlign="right";ctx.font=`${Math.max(10,Math.min(15,band*.6))}px system-ui`;
+ for(let i=0;i<n;i++){const y=top+(n-1-i)*band;
+  ctx.fillStyle=i===cur?"rgba(139,92,246,.6)":i%s.length===0?"rgba(255,255,255,.12)":i%2?"rgba(255,255,255,.03)":"rgba(255,255,255,.06)";
+  ctx.fillRect(0,y,W,band-1);
+  ctx.fillStyle=i===cur?"#fff":"rgba(255,255,255,.55)";ctx.fillText(nm(midi(i)),W-10,y+band/2+4)}
 }
-$("wave").onchange = () => { if (osc) osc.type = $("wave").value; };
-
-async function start() {
-  $("start").disabled = true;
-  $("info").textContent = "Loading hand tracking…";
-  const fileset = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
-  landmarker = await HandLandmarker.createFromOptions(fileset, {
-    baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task" },
-    runningMode: "VIDEO", numHands: 2
-  });
-  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 960, height: 720 }, audio: false });
-  video.srcObject = stream;
-  await video.play();
-  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-  initAudio();
-  running = true;
-  $("rec").disabled = false;
-  $("info").textContent = "Show your hands!";
-  loop();
+function dots(l,color){
+ ctx.shadowBlur=14;ctx.shadowColor=color;ctx.fillStyle=color;
+ l.forEach((p,i)=>{ctx.beginPath();ctx.arc((1-p.x)*cv.width,p.y*cv.height,i===9?11:4,0,7);ctx.fill()});
+ ctx.shadowBlur=0;
 }
-
-function loop() {
-  if (!running) return;
-  const res = landmarker.detectForVideo(video, performance.now());
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  let pitch = null, vol = null;
-
-  res.landmarks.forEach((lm, i) => {
-    // MediaPipe labels assume a mirrored image; flip so it matches what the user sees
-    const label = res.handedness[i][0].categoryName === "Left" ? "Right" : "Left";
-    const palm = lm[9];
-    ctx.fillStyle = label === "Right" ? "#8b5cf6" : "#22d3ee";
-    lm.forEach(p => { ctx.beginPath(); ctx.arc(p.x * canvas.width, p.y * canvas.height, 5, 0, 7); ctx.fill(); });
-    if (label === "Right") pitch = palm.y; else vol = 1 - palm.y;
-  });
-
-  const t = audioCtx.currentTime;
-  if (pitch !== null) {
-    const midi = noteFromHeight(pitch);
-    osc.frequency.setTargetAtTime(midiToHz(midi), t, 0.02);
-    const v = vol !== null ? Math.min(1, Math.max(0, vol)) * 0.5 : 0.25;
-    gain.gain.setTargetAtTime(v, t, 0.05);
-    $("info").textContent = `Note: ${NAMES[midi % 12]}${Math.floor(midi / 12) - 1}`;
-  } else {
-    gain.gain.setTargetAtTime(0, t, 0.08);
-    $("info").textContent = "Show your right hand to play";
-  }
-  requestAnimationFrame(loop);
+function loop(){
+ if(!running)return;
+ const r=lm.detectForVideo(video,performance.now());
+ ctx.clearRect(0,0,cv.width,cv.height);
+ const hs=r.landmarks.map((l,i)=>({l,R:r.handedness[i][0].categoryName==="Left"}));
+ let ph=null,vh=null;
+ if(hs.length===1)ph=hs[0].l;else{hs.forEach(h=>{h.R?ph=h.l:vh=h.l});if(!ph&&hs.length)ph=hs[0].l}
+ const cur=ph?idxFromT(norm(ph[9].y)):-1;
+ ladder(cur);
+ hs.forEach(h=>dots(h.l,h.l===ph?"#8b5cf6":"#22d3ee"));
+ const t=ac.currentTime;let on=!!ph;
+ if(on&&$("mode").value==="pinch")on=Math.hypot(ph[4].x-ph[8].x,ph[4].y-ph[8].y)/Math.hypot(ph[0].x-ph[9].x,ph[0].y-ph[9].y)<.35;
+ let label="";
+ if(on){const m=midi(cur),f=hz(m);o1.frequency.setTargetAtTime(f,t,.015);o2.frequency.setTargetAtTime(f,t,.015);
+  vg.gain.setTargetAtTime((vh?1-norm(vh[9].y):.6)*.45,t,.04);label=nm(m)}
+ else vg.gain.setTargetAtTime(0,t,.08);
+ if(label!==lastNote){$("note").textContent=label;lastNote=label}
+ requestAnimationFrame(loop);
 }
+$("go").onclick=async()=>{
+ const b=$("go");b.disabled=true;b.textContent="Loading…";$("err").textContent="";
+ try{
+  ensureAudio();
+  const fs=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  lm=await HandLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"},runningMode:"VIDEO",numHands:2});
+  stream=await navigator.mediaDevices.getUserMedia({video:{width:960,height:720,facingMode:"user"},audio:false});
+  video.srcObject=stream;await video.play();cv.width=video.videoWidth;cv.height=video.videoHeight;
+  $("intro").hidden=true;$("rec").disabled=false;running=true;loop();
+ }catch(e){b.disabled=false;b.textContent="Try again";
+  $("err").textContent=e.name==="NotAllowedError"?"Camera is blocked. Click the camera icon in the address bar, allow it, then try again.":"Something went wrong: "+e.message}
+};
 
-function toggleRecord() {
-  if (recorder && recorder.state === "recording") { recorder.stop(); return; }
-  const tracks = [...dest.stream.getAudioTracks()];
-  if ($("withFace").checked) tracks.push(...stream.getVideoTracks());
-  const rs = new MediaStream(tracks);
-  const isVideo = $("withFace").checked;
-  const mime = isVideo ? "video/webm" : "audio/webm";
-  recorder = new MediaRecorder(rs, { mimeType: mime });
-  chunks = [];
-  recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
-  recorder.onstop = () => {
-    const url = URL.createObjectURL(new Blob(chunks, { type: mime }));
-    const a = document.createElement("a");
-    a.href = url; a.download = `noxymusic-${Date.now()}.webm`; a.click();
-    $("rec").textContent = "Record"; $("rec").classList.remove("rec");
-  };
-  recorder.start();
-  $("rec").textContent = "Stop & save"; $("rec").classList.add("rec");
+/* ---- song: detect key, play ---- */
+const MAJ=[6.35,2.23,3.48,2.33,4.38,4.09,2.52,5.19,2.39,3.66,2.29,2.88],MIN=[6.33,2.68,3.52,5.38,2.6,3.53,2.54,4.75,3.98,2.69,3.34,3.17];
+function pearson(a,b){const m=x=>x.reduce((s,v)=>s+v,0)/x.length,ma=m(a),mb=m(b);let n=0,da=0,db=0;for(let i=0;i<a.length;i++){n+=(a[i]-ma)*(b[i]-mb);da+=(a[i]-ma)**2;db+=(b[i]-mb)**2}return n/Math.sqrt(da*db||1)}
+function detectKey(buf){
+ const x=buf.getChannelData(0),dec=Math.max(1,Math.round(buf.sampleRate/11025)),fs=buf.sampleRate/dec,N=4096,hop=Math.round(fs*.5);
+ const total=Math.floor(x.length/dec),span=Math.min(total,Math.round(fs*60)),s0=Math.floor((total-span)/2);
+ const chroma=new Array(12).fill(0),seg=new Float32Array(N),coef=[];
+ for(let m=48;m<96;m++)coef.push([m%12,2*Math.cos(2*Math.PI*hz(m)/fs)]);
+ for(let st=s0;st+N<=s0+span;st+=hop){
+  for(let i=0;i<N;i++){let a=0;const b=(st+i)*dec;for(let j=0;j<dec;j++)a+=x[b+j];seg[i]=a/dec*(.5-.5*Math.cos(2*Math.PI*i/N))}
+  for(const[pc,c]of coef){let s1=0,s2=0;for(let i=0;i<N;i++){const s=seg[i]+c*s1-s2;s2=s1;s1=s}chroma[pc]+=Math.sqrt(Math.max(0,s1*s1+s2*s2-c*s1*s2))}
+ }
+ let best={r:-2};
+ for(let k=0;k<12;k++){const rot=chroma.map((_,i)=>chroma[(i+k)%12]);
+  for(const minor of[false,true]){const r=pearson(rot,minor?MIN:MAJ);if(r>best.r)best={r,root:k,minor}}}
+ return best;
 }
+$("file").onchange=async e=>{
+ const f=e.target.files[0];if(!f)return;ensureAudio();
+ const a=$("song"),st=$("songStatus");st.textContent="Listening to your song…";
+ a.src=URL.createObjectURL(f);$("songBtn").disabled=false;
+ try{
+  const k=detectKey(await ac.decodeAudioData(await f.arrayBuffer()));
+  $("key").value=k.root;$("scale").value=k.minor?"Minor pentatonic":"Pentatonic (easy)";
+  st.textContent=`${f.name}\nKey found: ${NAMES[k.root]} ${k.minor?"minor":"major"}. Your notes now fit the song. You can change the scale any time.`;
+ }catch{st.textContent="Playing your song, but I couldn't detect its key. Pick a key manually."}
+ a.play().then(()=>$("songBtn").textContent="Pause").catch(()=>{});
+};
+$("songBtn").onclick=()=>{const a=$("song");if(a.paused){ensureAudio();a.play();$("songBtn").textContent="Pause"}else{a.pause();$("songBtn").textContent="Play"}};
 
-$("start").onclick = () => start().catch(e => { $("info").textContent = "Error: " + e.message; $("start").disabled = false; });
-$("rec").onclick = toggleRecord;
-</script>
-</body>
-</html>
+/* ---- DJ mode ---- */
+document.body.insertAdjacentHTML("beforeend",'<audio id="songB" loop></audio>');
+function xfade(v){if(!xA)return;xA.gain.value=Math.cos(v*Math.PI/2);xB.gain.value=Math.sin(v*Math.PI/2)}
+function setX(v){$("xf").value=v;xfade(v)}
+let trans=null;
+$("xf").oninput=()=>{trans=null;xfade(+$("xf").value)};
+$("volB").oninput=()=>songGB&&(songGB.gain.value=+$("volB").value);
+$("trLen").oninput=()=>$("trv").textContent=$("trLen").value+"s";
+const syncBtns=()=>{$("songBtn").textContent=$("song").paused?"Play":"Pause";$("btnB").textContent=$("songB").paused?"Play":"Pause"};
+$("song").onplay=$("song").onpause=$("songB").onplay=$("songB").onpause=syncBtns;
+$("fileB").onchange=e=>{const f=e.target.files[0];if(!f)return;ensureAudio();$("songB").src=URL.createObjectURL(f);$("nameB").textContent=f.name;$("btnB").disabled=false;
+ if(!$("song").src)setX(1);$("djMsg").textContent=""};
+$("btnB").onclick=()=>{const a=$("songB");ensureAudio();a.paused?a.play():a.pause()};
+$("goT").onclick=()=>{
+ ensureAudio();const msg=$("djMsg");
+ if(!$("song").src||!$("songB").src){msg.textContent="Load a song on both decks first.";return}
+ msg.textContent="";
+ const from=+$("xf").value<.5?"A":"B",to=from==="A"?"B":"A",el=d=>$(d==="A"?"song":"songB"),fl=d=>d==="A"?filtA:filtB;
+ const fEl=el(from),tEl=el(to);
+ if(tEl.paused)tEl.play();if(fEl.paused)fEl.play();
+ const type=$("tr").value,dur=type==="cut"?.05:+$("trLen").value,x0=+$("xf").value,x1=from==="A"?1:0,t0=performance.now(),id=trans=Symbol();
+ if(type==="brake")fEl.preservesPitch=fEl.mozPreservesPitch=fEl.webkitPreservesPitch=false;
+ if(type==="rise")fl(to).frequency.value=300;
+ (function step(){
+  if(trans!==id)return;
+  const p=Math.min(1,(performance.now()-t0)/(dur*1000)),e=p*p*(3-2*p);
+  if(type==="sweep")fl(from).frequency.value=20000*Math.pow(.01,e);
+  if(type==="rise")fl(to).frequency.value=300*Math.pow(66,e);
+  if(type==="brake")fEl.playbackRate=Math.max(.06,1-e*.94);
+  setX(x0+(x1-x0)*(type==="sweep"||type==="rise"?p:e));
+  if(p<1)requestAnimationFrame(step);
+  else{fl(from).frequency.value=20000;fl(to).frequency.value=20000;fEl.playbackRate=1;fEl.pause();trans=null}
+ })();
+};
+function tone(type,f,s,d,v,cut=8000,f2){
+ const t=ac.currentTime+s,o=ac.createOscillator(),g=ac.createGain(),l=ac.createBiquadFilter();
+ o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+ l.type="lowpass";l.frequency.value=cut;
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.setValueAtTime(v,t+Math.max(.02,d-.06));g.gain.linearRampToValueAtTime(0,t+d);
+ o.connect(l);l.connect(g);g.connect(fxG);o.start(t);o.stop(t+d+.05);
+}
+const FX={
+ horn(){[[0,.16],[.2,.16],[.4,.7]].forEach(([s,d])=>[480,600,720].forEach(f=>tone("sawtooth",f,s,d,.16,2500)))},
+ siren(){for(let i=0;i<6;i++)i%2?tone("sine",1300,i*.4,.4,.3,4000,600):tone("sine",600,i*.4,.4,.3,4000,1300)},
+ laser(){tone("sawtooth",2400,0,.35,.3,6000,120)},
+ scratch(){for(let i=0;i<6;i++)tone("sawtooth",i%2?300:1100,i*.07,.07,.3,3500,i%2?1100:300)},
+ boing(){tone("sine",180,0,.25,.5,4000,700);tone("sine",700,.25,.45,.5,4000,140)},
+ drop(){tone("sine",220,0,1.4,.9,800,40);tone("triangle",110,0,1.4,.5,500,30)},
+ applause(){const n=ac.sampleRate*2,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+  const sr=ac.createBufferSource(),bp=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;sr.buffer=b;bp.type="bandpass";bp.frequency.value=2200;
+  g.gain.setValueAtTime(0,t);for(let i=0;i<40;i++)g.gain.linearRampToValueAtTime(.15+Math.random()*.5,t+.05+i*.045);g.gain.linearRampToValueAtTime(0,t+2);
+  sr.connect(bp);bp.connect(g);g.connect(fxG);sr.start(t)}
+};
+document.querySelectorAll("[data-fx]").forEach(b=>b.onclick=()=>{ensureAudio();FX[b.dataset.fx]()});
+[["chip",1.5],["demon",.7]].forEach(([id,r])=>{let held=false;const b=$(id),set=v=>["song","songB"].forEach(n=>{const a=$(n);a.preservesPitch=a.mozPreservesPitch=a.webkitPreservesPitch=false;a.playbackRate=v});
+ b.onpointerdown=()=>{held=true;set(r)};b.onpointerup=b.onpointerleave=()=>{if(held){held=false;set(1)}}});
+addEventListener("keydown",e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||e.repeat)return;
+ const k=+e.key;if(k>=1&&k<=7){ensureAudio();FX[Object.keys(FX)[k-1]]()}});
+/* ---- record ---- */
+let mr,chunks=[],timer,t0;
+$("rec").onclick=async()=>{
+ if(mr&&mr.state==="recording"){mr.stop();return}
+ ensureAudio();const info=$("recInfo");info.textContent="";
+ micG.gain.value=0;
+ if($("mic").checked){try{
+  if(!micStream){micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});ac.createMediaStreamSource(micStream).connect(micG)}
+  micG.gain.value=1;info.textContent="Tip: use headphones so the mic doesn't pick up the speakers."
+ }catch{info.textContent="Microphone not available, recording without it."}}
+ const video_=$("face").checked,tracks=[...rec.stream.getAudioTracks()];
+ if(video_)tracks.push(...stream.getVideoTracks());
+ const mime=[video_?"video/webm;codecs=vp9,opus":"audio/webm;codecs=opus",video_?"video/webm":"audio/webm"].find(m=>MediaRecorder.isTypeSupported(m));
+ mr=new MediaRecorder(new MediaStream(tracks),{mimeType:mime});chunks=[];
+ mr.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+ mr.onstop=()=>{clearInterval(timer);const b=$("rec");b.textContent="Record";b.classList.remove("live");
+  const url=URL.createObjectURL(new Blob(chunks,{type:mime}));
+  $("result").innerHTML=`<${video_?"video":"audio"} controls src="${url}"></${video_?"video":"audio"}><a class="btn main" download="noxymusic-${Date.now()}.webm" href="${url}">Download</a>`};
+ mr.start();t0=Date.now();$("rec").classList.add("live");
+ timer=setInterval(()=>{const s=Math.floor((Date.now()-t0)/1000);$("rec").textContent=`Stop · ${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`},250);
+ $("rec").textContent="Stop · 0:00";
+};
+</script></body></html>
