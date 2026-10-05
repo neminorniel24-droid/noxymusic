@@ -46,3 +46,4 @@ const FX={
 Q("[data-fx]").forEach(b=>b.onclick=()=>{ensureAudio();FX[b.dataset.fx]()});
 [["chip",1.5],["demon",.7]].forEach(([id,r])=>{let held=false;const b=$(id),set=v=>["A","B"].forEach(k=>{const a=D[k].a;a.preservesPitch=a.mozPreservesPitch=a.webkitPreservesPitch=false;a.playbackRate=v});
  b.onpointerdown=()=>{held=true;set(r)};b.onpointerup=b.onpointerleave=()=>{if(held){held=false;set(1)}}});
+addEventListener("keydown",e=>{if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||e.repeat)return;const k=+e.key;if(k>=1&&k<=7){ensureAudio();FX[Object.keys(FX)[k-1]]()}});
