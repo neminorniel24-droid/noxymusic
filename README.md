@@ -19,3 +19,13 @@ Open http://localhost:8000 (camera and microphone need localhost or HTTPS).
 ## Deploy
 See [docs/DEPLOY.md](docs/DEPLOY.md). GitHub Pages deploys automatically from `main`.
 
+## Project structure
+```
+index.html          page markup
+css/                base, stage, panel, components styles
+js/                 core, audio, notes, hands, looper, dj, sampler, faces, record
+assets/             icons
+docs/               architecture, gestures, deploy, roadmap
+.github/            Pages workflow, issue and PR templates
+```
+
