@@ -24,4 +24,12 @@
   <h3>Effects</h3><div class="row">Reverb<input id="rev" type="range" min="0" max="1" step=".05" value=".3"></div><div class="row">Echo<input id="echo" type="range" min="0" max="1" step=".05" value=".15"></div>
   <div class="row">Master volume<input id="mv" type="range" min="0" max="1" step=".05" value=".9"></div>
   <p class="small">Tip: upload a song in the DJ tab and your key and scale are set automatically.</p></div>
+ <div class="pane" id="p-dj" hidden>
+  <h3>Decks</h3><div id="decks"></div>
+  <div class="fl"><b>A</b><input id="xf" type="range" min="0" max="1" step=".01" value="0" style="flex:1"><b>B</b></div>
+  <div class="fl"><select id="tr"><option value="fade">Smooth crossfade</option><option value="sweep">Filter sweep out</option><option value="rise">Build-up in</option><option value="brake">Vinyl brake</option><option value="cut">Hard cut</option></select>
+   <input id="trLen" type="range" min="2" max="16" step="1" value="8" style="width:90px"><span id="trv" class="small">8s</span><button id="goT" class="go">Transition</button></div><div id="djMsg" class="small"></div>
+  <h3>Sound effects (keys 1-7)</h3>
+  <div class="pads"><button class="pad" data-fx="horn">📯 Air horn</button><button class="pad" data-fx="siren">🚨 Siren</button><button class="pad" data-fx="laser">🔫 Laser</button><button class="pad" data-fx="scratch">💿 Scratch</button><button class="pad" data-fx="boing">🪀 Boing</button><button class="pad" data-fx="drop">💣 Bass drop</button><button class="pad" data-fx="applause">👏 Applause</button><button class="pad" id="chip">🐿️ Chipmunk</button><button class="pad" id="demon">👹 Demon</button></div>
+  <p class="small">Chipmunk and Demon: hold to speed up or slow down the songs.</p></div>
  
