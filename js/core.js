@@ -10,3 +10,4 @@ let ac,master,an,fd,rec,bus,wet,ew,djOut,fxG,micG,micStream,hv,lm,stream,running
 let loopT0=null,rs=null,tracks=[],sBuf=null,fl=null,ch="";
 const video=$("video"),fc=$("fc"),fcx=fc.getContext("2d"),cv=$("cv"),ctx=cv.getContext("2d"),rc=document.createElement("canvas"),rcx=rc.getContext("2d");
 Q("#tabs button").forEach(b=>b.onclick=()=>{Q("#tabs button").forEach(x=>x.classList.toggle("on",x===b));Q(".pane").forEach(p=>p.hidden=p.id!=="p-"+b.dataset.t)});
+Object.keys(FILT).forEach((k,i)=>{const b=document.createElement("button");b.textContent=k;if(!i)b.className="on";b.onclick=()=>{filt=FILT[k];video.style.filter=filt;Q("#chips button").forEach(x=>x.classList.toggle("on",x===b))};$("chips").append(b)});
