@@ -9,3 +9,5 @@
 - Hand up = sound: plays while your right hand is visible
 - Pinch to play: plays only while thumb and index finger touch
 
+## Keyboard
+- Keys 1 to 7 trigger the DJ sound effects
