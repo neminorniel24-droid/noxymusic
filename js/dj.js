@@ -32,3 +32,6 @@ $("goT").onclick=()=>{ensureAudio();const m=$("djMsg");if(!D.A.a.src||!D.B.a.src
   if(type==="sweep")D[from].f.frequency.value=20000*Math.pow(.01,e);if(type==="rise")D[to].f.frequency.value=300*Math.pow(66,e);if(type==="brake")fE.playbackRate=Math.max(.06,1-e*.94);
   setX(x0+(x1-x0)*(type==="sweep"||type==="rise"?p:e));
   if(p<1)requestAnimationFrame(step);else{D.A.f.frequency.value=D.B.f.frequency.value=20000;fE.playbackRate=1;fE.pause();trans=null}})()};
+function tone(type,f,s,d,v,cut=8000,f2){const t=ac.currentTime+s,o=ac.createOscillator(),g=ac.createGain(),l=ac.createBiquadFilter();
+ o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);l.type="lowpass";l.frequency.value=cut;
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.setValueAtTime(v,t+Math.max(.02,d-.06));g.gain.linearRampToValueAtTime(0,t+d);o.connect(l);l.connect(g);g.connect(fxG);o.start(t);o.stop(t+d+.05)}
