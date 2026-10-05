@@ -8,3 +8,6 @@
 ## GitHub Pages without Actions
 Set Source to Deploy from a branch, branch `main`, folder `/ (root)`.
 
+## Other hosts
+Netlify, Vercel and Cloudflare Pages work by pointing them at the repo root. No build command is needed.
+
