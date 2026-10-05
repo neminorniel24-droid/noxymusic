@@ -10,3 +10,14 @@ function detectKey(buf){const x=buf.getChannelData(0),dec=Math.max(1,Math.round(
  for(let st=s0;st+N<=s0+span;st+=hop){for(let i=0;i<N;i++){let a=0;const b=(st+i)*dec;for(let j=0;j<dec;j++)a+=x[b+j];seg[i]=a/dec*(.5-.5*Math.cos(2*Math.PI*i/N))}
   for(const[pc,c]of coef){let s1=0,s2=0;for(let i=0;i<N;i++){const s=seg[i]+c*s1-s2;s2=s1;s1=s}chroma[pc]+=Math.sqrt(Math.max(0,s1*s1+s2*s2-c*s1*s2))}}
  let best={r:-2};for(let k=0;k<12;k++){const rot=chroma.map((_,i)=>chroma[(i+k)%12]);for(const minor of[false,true]){const r=pearson(rot,minor?MIN:MAJ);if(r>best.r)best={r,root:k,minor}}}return best}
+const mmss=s=>Math.floor(s/60)+":"+String(Math.floor(s%60)).padStart(2,"0");
+const syncBtns=()=>{for(const k in D)$("play"+k).textContent=D[k].a.paused?"Play":"Pause"};
+for(const k of["A","B"]){const a=new Audio();a.loop=true;D[k]={a};
+ a.onplay=a.onpause=syncBtns;a.ontimeupdate=()=>{if(a.duration){$("seek"+k).value=a.currentTime/a.duration;$("time"+k).textContent=mmss(a.currentTime)+" / "+mmss(a.duration)}};
+ $("seek"+k).oninput=()=>{if(a.duration)a.currentTime=$("seek"+k).value*a.duration};$("cue"+k).onclick=()=>a.currentTime=0;
+ $("vol"+k).oninput=()=>D[k].g&&(D[k].g.gain.value=+$("vol"+k).value);
+ $("play"+k).onclick=()=>{ensureAudio();a.paused?a.play():a.pause()};
+ $("file"+k).onchange=async e=>{const f=e.target.files[0];if(!f)return;ensureAudio();const o=D[k==="A"?"B":"A"].a,nm_=$("name"+k);
+  a.src=URL.createObjectURL(f);$("play"+k).disabled=false;nm_.textContent="Listening…";
+  try{const kk=detectKey(await ac.decodeAudioData(await f.arrayBuffer()));$("key").value=kk.root;$("scale").value=kk.minor?"Minor pentatonic":"Pentatonic (easy)";nm_.textContent=f.name+" · "+NAMES[kk.root]+(kk.minor?" minor":" major")}catch{nm_.textContent=f.name}
+  if(!o.src){setX(k==="A"?0:1);a.play()}$("djMsg").textContent=""}}
