@@ -4,3 +4,6 @@
 #tabs button.on{background:linear-gradient(90deg,var(--a),var(--c));color:#fff;box-shadow:0 4px 18px rgba(139,92,246,.45)}
 h3{margin:14px 0 6px;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}h3:first-child{margin-top:2px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;font-size:.92rem}.row>select,.row>input[type=range]{width:56%}
+.fl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0;font-size:.9rem}
+select,button,.btn{background:rgba(255,255,255,.07);color:var(--fg);border:1px solid var(--ln);padding:8px 13px;border-radius:11px;font:500 .92rem Outfit;cursor:pointer;transition:.15s}
+select{background:#1a1830}button:hover,.btn:hover{border-color:var(--a);box-shadow:0 0 14px rgba(139,92,246,.35)}button:disabled{opacity:.45;cursor:default;box-shadow:none}
