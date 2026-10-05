@@ -21,3 +21,6 @@ for(const k of["A","B"]){const a=new Audio();a.loop=true;D[k]={a};
   a.src=URL.createObjectURL(f);$("play"+k).disabled=false;nm_.textContent="Listening…";
   try{const kk=detectKey(await ac.decodeAudioData(await f.arrayBuffer()));$("key").value=kk.root;$("scale").value=kk.minor?"Minor pentatonic":"Pentatonic (easy)";nm_.textContent=f.name+" · "+NAMES[kk.root]+(kk.minor?" minor":" major")}catch{nm_.textContent=f.name}
   if(!o.src){setX(k==="A"?0:1);a.play()}$("djMsg").textContent=""}}
+function xfade(v){if(!D.A.x)return;D.A.x.gain.value=Math.cos(v*Math.PI/2);D.B.x.gain.value=Math.sin(v*Math.PI/2)}
+function setX(v){$("xf").value=v;xfade(v)}let trans=null;
+$("xf").oninput=()=>{trans=null;xfade(+$("xf").value)};$("trLen").oninput=()=>$("trv").textContent=$("trLen").value+"s";
