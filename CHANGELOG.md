@@ -5,3 +5,5 @@
 - DJ mode, looper, sampler, 50 face characters, video filters and recording
 - Split into modules with GitHub Pages deployment
 
+## 0.1.0
+- First prototype: hand-tracked theremin with recording
