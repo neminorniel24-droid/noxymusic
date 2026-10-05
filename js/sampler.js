@@ -8,3 +8,4 @@ $("srec").onclick=async()=>{ensureAudio();const m=$("smsg");
  try{const ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false}}),r=new MediaRecorder(ms),parts=[];
   r.ondataavailable=e=>parts.push(e.data);r.onstop=async()=>{ms.getTracks().forEach(t=>t.stop());await useSample(await new Blob(parts).arrayBuffer())};
   r.start();m.textContent="Recording for 4 seconds… make a sound!";setTimeout(()=>r.stop(),4000)}catch{m.textContent="Microphone is blocked or unavailable."}};
+$("sfile").onchange=async e=>{const f=e.target.files[0];if(f){ensureAudio();await useSample(await f.arrayBuffer())}};
