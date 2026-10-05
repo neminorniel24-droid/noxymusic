@@ -16,3 +16,12 @@
  <div id="intro"><h2>Play music in the air</h2>
   <ol><li>Allow your camera</li><li><b>Right hand</b>: move up and down to change the note</li><li><b>Left hand</b>: raise it for more volume</li><li>Upload a song and every note fits it</li></ol>
   <button id="go" class="go">Start camera</button><div id="err"></div><div class="small">Video stays on your device. DJ and Studio tabs work without the camera.</div></div></div></section>
+<aside class="glass" id="panel">
+ <nav id="tabs"><button data-t="play" class="on">Play</button><button data-t="dj">DJ</button><button data-t="studio">Studio</button><button data-t="face">Faces</button><button data-t="rec">Record</button></nav>
+ <div class="pane" id="p-play">
+  <h3>Instrument</h3><div class="row">Sound<select id="inst"></select></div><div class="row">Key<select id="key"></select></div><div class="row">Scale<select id="scale"></select></div>
+  <div class="row">Play style<select id="mode"><option value="hold">Hand up = sound</option><option value="pinch">Pinch to play</option></select></div>
+  <h3>Effects</h3><div class="row">Reverb<input id="rev" type="range" min="0" max="1" step=".05" value=".3"></div><div class="row">Echo<input id="echo" type="range" min="0" max="1" step=".05" value=".15"></div>
+  <div class="row">Master volume<input id="mv" type="range" min="0" max="1" step=".05" value=".9"></div>
+  <p class="small">Tip: upload a song in the DJ tab and your key and scale are set automatically.</p></div>
+ 
