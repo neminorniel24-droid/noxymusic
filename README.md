@@ -16,3 +16,6 @@ python3 -m http.server 8000
 ```
 Open http://localhost:8000 (camera and microphone need localhost or HTTPS).
 
+## Deploy
+See [docs/DEPLOY.md](docs/DEPLOY.md). GitHub Pages deploys automatically from `main`.
+
