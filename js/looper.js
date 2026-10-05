@@ -6,3 +6,4 @@ $("bpm").oninput=()=>$("bv").textContent=$("bpm").value;
 $("lrec").onclick=()=>{if(!running)return msg("Start the camera first (Play tab).");if(rs)return;if(tracks.length>=4)return msg("Max 4 tracks. Clear or delete one.");
  const now=performance.now();$("bpm").disabled=$("bars").disabled=true;
  if(loopT0===null){loopT0=now;rs={ev:[],st:now};msg("Recording… play now!")}else{rs={ev:[],armed:true,cyc:Math.floor((now-loopT0)/len())};msg("Armed. Recording starts on the next bar.")}};
+$("lclr").onclick=()=>{tracks.forEach(t=>t.v.stop());tracks=[];rs=null;loopT0=null;$("bpm").disabled=$("bars").disabled=false;$("lpb").style.width=0;rows();msg("Cleared.")};
