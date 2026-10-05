@@ -24,3 +24,11 @@ for(const k of["A","B"]){const a=new Audio();a.loop=true;D[k]={a};
 function xfade(v){if(!D.A.x)return;D.A.x.gain.value=Math.cos(v*Math.PI/2);D.B.x.gain.value=Math.sin(v*Math.PI/2)}
 function setX(v){$("xf").value=v;xfade(v)}let trans=null;
 $("xf").oninput=()=>{trans=null;xfade(+$("xf").value)};$("trLen").oninput=()=>$("trv").textContent=$("trLen").value+"s";
+$("goT").onclick=()=>{ensureAudio();const m=$("djMsg");if(!D.A.a.src||!D.B.a.src){m.textContent="Upload a song to both decks first.";return}m.textContent="";
+ const from=+$("xf").value<.5?"A":"B",to=from==="A"?"B":"A",fE=D[from].a,tE=D[to].a;if(tE.paused)tE.play();if(fE.paused)fE.play();
+ const type=$("tr").value,dur=type==="cut"?.05:+$("trLen").value,x0=+$("xf").value,x1=from==="A"?1:0,t0=performance.now(),id=trans=Symbol();
+ if(type==="brake")fE.preservesPitch=fE.mozPreservesPitch=fE.webkitPreservesPitch=false;if(type==="rise")D[to].f.frequency.value=300;
+ (function step(){if(trans!==id)return;const p=Math.min(1,(performance.now()-t0)/(dur*1000)),e=p*p*(3-2*p);
+  if(type==="sweep")D[from].f.frequency.value=20000*Math.pow(.01,e);if(type==="rise")D[to].f.frequency.value=300*Math.pow(66,e);if(type==="brake")fE.playbackRate=Math.max(.06,1-e*.94);
+  setX(x0+(x1-x0)*(type==="sweep"||type==="rise"?p:e));
+  if(p<1)requestAnimationFrame(step);else{D.A.f.frequency.value=D.B.f.frequency.value=20000;fE.playbackRate=1;fE.pause();trans=null}})()};
