@@ -1,0 +1,3 @@
+#stage{position:relative;background:#000;border-radius:22px;overflow:hidden;aspect-ratio:4/3;width:100%;border:1px solid var(--ln);box-shadow:0 0 80px rgba(139,92,246,.28)}
+video,canvas.ov{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}video{transform:scaleX(-1)}
+#note{position:absolute;left:18px;top:8px;font-size:3rem;font-weight:700;text-shadow:0 0 24px var(--a),0 0 8px var(--b)}
