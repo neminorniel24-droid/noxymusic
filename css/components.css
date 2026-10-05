@@ -4,3 +4,5 @@
 #rec{width:100%;margin-top:10px;padding:13px;font-size:1.05rem}#rec.live{background:#dc2626;animation:pulse 1.2s infinite}@keyframes pulse{50%{box-shadow:0 0 22px #dc2626}}
 #lp{height:8px;background:rgba(255,255,255,.08);border-radius:9px;overflow:hidden;margin:8px 0}#lpb{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--b),var(--a))}
 .chip2{display:flex;align-items:center;gap:6px;justify-content:space-between;background:rgba(0,0,0,.28);border:1px solid var(--ln);border-radius:10px;padding:5px 8px;margin:5px 0;font-size:.85rem}.chip2 button{padding:3px 9px}
+#result video,#result audio{width:100%;margin-top:8px;border-radius:12px;position:static;transform:none}#result a{display:block;text-align:center;margin-top:8px;text-decoration:none}
+#chars{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}#chars button{font-size:1.5rem;padding:6px 0;border-radius:12px}#chars button.on{background:linear-gradient(135deg,var(--a),var(--c));border:0}
