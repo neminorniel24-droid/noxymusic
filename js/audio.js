@@ -16,3 +16,5 @@ function ensureAudio(){
  for(const k in D){const d=D[k],sr=ac.createMediaElementSource(d.a);d.g=ac.createGain();d.g.gain.value=+$("vol"+k).value;d.f=ac.createBiquadFilter();d.f.type="lowpass";d.f.frequency.value=20000;d.x=ac.createGain();sr.connect(d.g);d.g.connect(d.f);d.f.connect(d.x);d.x.connect(djOut)}
  xfade(+$("xf").value);hv=voice($("inst").value);fx();
 }
+function fx(){wet.gain.value=$("rev").value*.9;ew.gain.value=$("echo").value*.6}
+$("inst").onchange=()=>{if(ac){hv.stop();hv=voice($("inst").value)}};$("rev").oninput=$("echo").oninput=()=>ac&&fx();$("mv").oninput=()=>master&&(master.gain.value=+$("mv").value);
