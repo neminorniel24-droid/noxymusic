@@ -35,3 +35,11 @@ $("goT").onclick=()=>{ensureAudio();const m=$("djMsg");if(!D.A.a.src||!D.B.a.src
 function tone(type,f,s,d,v,cut=8000,f2){const t=ac.currentTime+s,o=ac.createOscillator(),g=ac.createGain(),l=ac.createBiquadFilter();
  o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);l.type="lowpass";l.frequency.value=cut;
  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);g.gain.setValueAtTime(v,t+Math.max(.02,d-.06));g.gain.linearRampToValueAtTime(0,t+d);o.connect(l);l.connect(g);g.connect(fxG);o.start(t);o.stop(t+d+.05)}
+const FX={
+ horn(){[[0,.16],[.2,.16],[.4,.7]].forEach(([s,d])=>[480,600,720].forEach(f=>tone("sawtooth",f,s,d,.16,2500)))},
+ siren(){for(let i=0;i<6;i++)i%2?tone("sine",1300,i*.4,.4,.3,4000,600):tone("sine",600,i*.4,.4,.3,4000,1300)},
+ laser(){tone("sawtooth",2400,0,.35,.3,6000,120)},scratch(){for(let i=0;i<6;i++)tone("sawtooth",i%2?300:1100,i*.07,.07,.3,3500,i%2?1100:300)},
+ boing(){tone("sine",180,0,.25,.5,4000,700);tone("sine",700,.25,.45,.5,4000,140)},drop(){tone("sine",220,0,1.4,.9,800,40);tone("triangle",110,0,1.4,.5,500,30)},
+ applause(){const n=ac.sampleRate*2,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+  const s=ac.createBufferSource(),bp=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=b;bp.type="bandpass";bp.frequency.value=2200;g.gain.setValueAtTime(0,t);
+  for(let i=0;i<40;i++)g.gain.linearRampToValueAtTime(.15+Math.random()*.5,t+.05+i*.045);g.gain.linearRampToValueAtTime(0,t+2);s.connect(bp);bp.connect(g);g.connect(fxG);s.start(t)}};
