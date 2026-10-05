@@ -43,3 +43,6 @@ const FX={
  applause(){const n=ac.sampleRate*2,b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
   const s=ac.createBufferSource(),bp=ac.createBiquadFilter(),g=ac.createGain(),t=ac.currentTime;s.buffer=b;bp.type="bandpass";bp.frequency.value=2200;g.gain.setValueAtTime(0,t);
   for(let i=0;i<40;i++)g.gain.linearRampToValueAtTime(.15+Math.random()*.5,t+.05+i*.045);g.gain.linearRampToValueAtTime(0,t+2);s.connect(bp);bp.connect(g);g.connect(fxG);s.start(t)}};
+Q("[data-fx]").forEach(b=>b.onclick=()=>{ensureAudio();FX[b.dataset.fx]()});
+[["chip",1.5],["demon",.7]].forEach(([id,r])=>{let held=false;const b=$(id),set=v=>["A","B"].forEach(k=>{const a=D[k].a;a.preservesPitch=a.mozPreservesPitch=a.webkitPreservesPitch=false;a.playbackRate=v});
+ b.onpointerdown=()=>{held=true;set(r)};b.onpointerup=b.onpointerleave=()=>{if(held){held=false;set(1)}}});
