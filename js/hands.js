@@ -24,3 +24,10 @@ function loop(){
  rcx.filter=filt;rcx.save();rcx.translate(rc.width,0);rcx.scale(-1,1);rcx.drawImage(video,0,0,rc.width,rc.height);rcx.restore();rcx.filter="none";rcx.drawImage(fc,0,0);if($("ovl").checked)rcx.drawImage(cv,0,0);
  requestAnimationFrame(loop);
 }
+$("go").onclick=async()=>{const b=$("go");b.disabled=true;b.textContent="Loading…";$("err").textContent="";
+ try{ensureAudio();
+  const fs=await MP.FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm");
+  lm=await MP.HandLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"},runningMode:"VIDEO",numHands:2});
+  stream=await navigator.mediaDevices.getUserMedia({video:{width:960,height:720,facingMode:"user"},audio:false});
+  video.srcObject=stream;await video.play();cv.width=rc.width=fc.width=video.videoWidth;cv.height=rc.height=fc.height=video.videoHeight;$("intro").hidden=true;running=true;loop();
+ }catch(e){b.disabled=false;b.textContent="Try again";$("err").textContent=e.name==="NotAllowedError"?"Camera is blocked. Click the camera icon in the address bar, allow it, then try again.":"Something went wrong: "+e.message}};
