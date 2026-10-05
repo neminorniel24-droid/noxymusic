@@ -7,3 +7,6 @@ const NAMES="C C# D D# E F F# G G# A A# B".split(" "),OCT=3,BASE=48;
 const fill=(id,a)=>a.forEach(([v,t])=>$(id).add(new Option(t,v)));
 fill("inst",Object.keys(PRE).map(k=>[k,k]));fill("key",NAMES.map((n,i)=>[i,n]));fill("scale",Object.keys(SCALES).map(k=>[k,k]));$("scale").value="Pentatonic (easy)";
 let ac,master,an,fd,rec,bus,wet,ew,djOut,fxG,micG,micStream,hv,lm,stream,running=false,lastNote="",lastF=220,filt="none",lastBeat=-1;
+let loopT0=null,rs=null,tracks=[],sBuf=null,fl=null,ch="";
+const video=$("video"),fc=$("fc"),fcx=fc.getContext("2d"),cv=$("cv"),ctx=cv.getContext("2d"),rc=document.createElement("canvas"),rcx=rc.getContext("2d");
+Q("#tabs button").forEach(b=>b.onclick=()=>{Q("#tabs button").forEach(x=>x.classList.toggle("on",x===b));Q(".pane").forEach(p=>p.hidden=p.id!=="p-"+b.dataset.t)});
