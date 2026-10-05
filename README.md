@@ -38,3 +38,5 @@ Camera, microphone and uploaded songs stay on the device. Nothing is uploaded to
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## License
+MIT, see [LICENSE](LICENSE).
