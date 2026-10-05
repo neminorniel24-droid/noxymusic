@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://neminorniel24-droid.github.io/noxymusic/sitemap.xml
