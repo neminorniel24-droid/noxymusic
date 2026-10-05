@@ -14,3 +14,5 @@ NoxyMusic is a static site: no build step and no backend. Scripts are plain brow
 - `faces.js`: emoji face characters tracked with face landmarks
 - `record.js`: MediaRecorder with a filtered canvas video track
 
+## Audio graph
+Synth voices feed an effects bus (dry, reverb, echo) into the master gain. Deck audio and effect pads feed the DJ output into the master. Master feeds the speakers, a visualizer and the recorder.
