@@ -29,3 +29,6 @@ docs/               architecture, gestures, deploy, roadmap
 .github/            Pages workflow, issue and PR templates
 ```
 
+## Browser support
+Chrome and Edge on desktop work best. Canvas video filters are not supported in Safari.
+
