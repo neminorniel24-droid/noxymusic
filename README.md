@@ -32,3 +32,6 @@ docs/               architecture, gestures, deploy, roadmap
 ## Browser support
 Chrome and Edge on desktop work best. Canvas video filters are not supported in Safari.
 
+## Privacy
+Camera, microphone and uploaded songs stay on the device. Nothing is uploaded to a server.
+
