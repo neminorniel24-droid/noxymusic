@@ -32,4 +32,15 @@
   <h3>Sound effects (keys 1-7)</h3>
   <div class="pads"><button class="pad" data-fx="horn">📯 Air horn</button><button class="pad" data-fx="siren">🚨 Siren</button><button class="pad" data-fx="laser">🔫 Laser</button><button class="pad" data-fx="scratch">💿 Scratch</button><button class="pad" data-fx="boing">🪀 Boing</button><button class="pad" data-fx="drop">💣 Bass drop</button><button class="pad" data-fx="applause">👏 Applause</button><button class="pad" id="chip">🐿️ Chipmunk</button><button class="pad" id="demon">👹 Demon</button></div>
   <p class="small">Chipmunk and Demon: hold to speed up or slow down the songs.</p></div>
+ <div class="pane" id="p-studio" hidden>
+  <h3>Tempo</h3><div class="row">BPM <span id="bv">100</span><input id="bpm" type="range" min="60" max="160" value="100"></div>
+  <div class="row">Loop length<select id="bars"><option value="1">1 bar</option><option value="2" selected>2 bars</option><option value="4">4 bars</option></select></div>
+  <div class="row"><label><input type="checkbox" id="metro"> Metronome click</label></div>
+  <h3>Looper (play notes, layer up to 4 tracks)</h3>
+  <div id="lp"><i id="lpb"></i></div>
+  <div class="fl"><button id="lrec" class="go">● Record loop</button><button id="lclr">Clear all</button></div><div id="lmsg" class="small">Start the camera, then record. The first loop sets the clock; later ones start on the next bar.</div>
+  <div id="tl"></div>
+  <h3>Sampler: turn any sound into an instrument</h3>
+  <div class="fl"><button id="srec" class="go">🎤 Record a sound (4s)</button><label class="btn" for="sfile">Upload audio</label><input id="sfile" type="file" accept="audio/*" hidden></div>
+  <div id="smsg" class="small">Hum, clap, bark or say a word. Then play it with your hand, in tune with your scale.</div></div>
  
