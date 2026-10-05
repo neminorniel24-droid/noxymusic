@@ -7,3 +7,4 @@ $("chars").onclick=async e=>{const b=e.target.closest("button");if(!b)return;ch=
   fl=await MP.FaceLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"},runningMode:"VIDEO",numFaces:1});m.textContent=""}
   catch(er){m.textContent="Couldn't load the face tracker: "+er.message}}
  if(ch&&!running)m.textContent="Start the camera on the Play tab to see it."};
+if(!navigator.mediaDevices||!window.MediaRecorder)$("err").textContent="This browser can't record. Please use Chrome or Edge.";
