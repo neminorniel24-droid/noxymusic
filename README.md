@@ -10,3 +10,9 @@ Make music with your hands. Play instruments with hand gestures, DJ with two dec
 - 50 face characters and 10 video filters, recorded into the video
 - Audio and video recording with download
 
+## Run locally
+```bash
+python3 -m http.server 8000
+```
+Open http://localhost:8000 (camera and microphone need localhost or HTTPS).
+
