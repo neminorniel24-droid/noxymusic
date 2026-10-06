@@ -12,3 +12,5 @@ Use good light, keep your hands in view and avoid a busy background.
 ## Address already in use
 Another server is using the port. Run `pkill -f http.server` or use another port such as 8001.
 
+## Filters do not show in the recording
+Canvas filters are not supported in Safari. Use Chrome or Edge.
