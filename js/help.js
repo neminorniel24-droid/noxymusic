@@ -4,3 +4,10 @@ const HELP=`<div class="box" role="dialog" aria-modal="true" aria-label="How to 
 <h3>Shortcuts</h3><p><b>1-7</b> sound effects, <b>Space</b> play or pause the louder deck, <b>[ ]</b> move the crossfader, <b>T</b> transition, <b>R</b> record, <b>M</b> metronome, <b>?</b> this help</p>
 <h3>Tips</h3><p>Upload a song in the DJ tab and your notes match its key. Use headphones when recording with the microphone.</p>
 <button class="go" id="helpClose">Got it</button></div>`;
+function toggleHelp(){
+ let h=$("help");
+ if(h){h.remove();return}
+ h=document.createElement("div");h.id="help";h.innerHTML=HELP;
+ h.onclick=e=>{if(e.target===h||e.target.id==="helpClose")h.remove()};
+ document.body.append(h);
+}
