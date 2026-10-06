@@ -1,0 +1,11 @@
+{
+  "name": "noxymusic",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Play, DJ, loop and record music with your hands in the browser",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "check": "node scripts/check.js"
+  },
+  "license": "MIT"
+}
