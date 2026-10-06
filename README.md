@@ -42,6 +42,9 @@ Chrome and Edge on desktop work best. Canvas video filters are not supported in 
 ## Privacy
 Camera, microphone and uploaded songs stay on the device. Nothing is uploaded to a server.
 
+## Documentation
+See the docs folder: ARCHITECTURE, GESTURES, SHORTCUTS, DEPLOY, FAQ, TROUBLESHOOTING, PRIVACY, ACCESSIBILITY, BROWSER_SUPPORT and ROADMAP.
+
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
