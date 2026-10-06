@@ -8,3 +8,6 @@ for(const f of walk(".")){
   if(f.endsWith(".webmanifest")||f.endsWith(".json"))JSON.parse(fs.readFileSync(f,"utf8"));
  }catch(e){bad++;console.error("FAIL",f,e.message)}
 }
+const html=fs.readFileSync("index.html","utf8");
+for(const m of html.matchAll(/(?:src|href)="((?:js|css|assets)\/[^"]+)"/g))if(!fs.existsSync(m[1])){bad++;console.error("MISSING",m[1])}
+console.log(bad?`${bad} problem(s)`:"All checks passed");
