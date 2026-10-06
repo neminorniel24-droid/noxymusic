@@ -1,8 +1,8 @@
 # Roadmap
 
 ## Next
-- BPM detection and beat-sync for DJ transitions
-- EQ knobs per deck
+- Phase alignment (true beat-match) for transitions
+- Per-deck effects
 - Hand-controlled DJ effects
 
 ## Later
