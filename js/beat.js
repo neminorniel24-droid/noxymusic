@@ -14,3 +14,14 @@ function detectBpm(buf){
  while(bpm>160)bpm/=2;
  return Math.round(bpm);
 }
+$("djMsg").insertAdjacentHTML("afterend",'<div id="beat" class="fl small"><span id="bpmA">A: - BPM</span><span id="bpmB">B: - BPM</span><button id="syncB">Sync B to A</button><button id="syncA">Sync A to B</button><button id="syncOff">Reset speed</button></div>');
+["A","B"].forEach(k=>$("file"+k).addEventListener("change",async e=>{
+ const f=e.target.files[0];
+ if(!f)return;
+ try{
+  ensureAudio();
+  BPMS[k]=detectBpm(await ac.decodeAudioData(await f.arrayBuffer()));
+  $("bpm"+k).textContent=`${k}: ${BPMS[k]} BPM`;
+  toast(`Deck ${k}: ${BPMS[k]} BPM`);
+ }catch{BPMS[k]=0;$("bpm"+k).textContent=`${k}: ? BPM`}
+}));
