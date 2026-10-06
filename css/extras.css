@@ -2,3 +2,5 @@
 #toast.show{opacity:1;transform:translate(-50%,0)}
 #hdrTools{margin-left:auto;display:flex;gap:8px;align-items:center}
 #hdrTools>button{padding:6px 12px;border-radius:99px;font-size:.85rem}
+#themes{display:flex;gap:6px;margin-right:6px}
+#themes button{width:18px;height:18px;padding:0;border-radius:50%;border:2px solid transparent}
