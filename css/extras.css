@@ -12,3 +12,4 @@
 #beat{align-items:center}#beat span{padding:3px 10px;border-radius:99px;background:rgba(0,0,0,.35);border:1px solid var(--ln)}
 .eqrow{display:flex;gap:8px;align-items:center;margin:6px 0}.eqrow label{display:flex;flex-direction:column;flex:1;font-size:.75rem;color:var(--dim)}
 @media(max-width:600px){.tag{display:none}#themes{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
