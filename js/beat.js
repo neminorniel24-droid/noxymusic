@@ -25,3 +25,10 @@ $("djMsg").insertAdjacentHTML("afterend",'<div id="beat" class="fl small"><span 
   toast(`Deck ${k}: ${BPMS[k]} BPM`);
  }catch{BPMS[k]=0;$("bpm"+k).textContent=`${k}: ? BPM`}
 }));
+function sync(to,from){
+ if(!BPMS[to]||!BPMS[from])return toast("Upload a song to both decks first");
+ const a=D[to].a;
+ a.preservesPitch=true;
+ a.playbackRate=Math.min(2,Math.max(.5,BPMS[from]/BPMS[to]));
+ toast(`Deck ${to} matched to ${BPMS[from]} BPM`);
+}
