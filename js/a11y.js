@@ -4,3 +4,6 @@ Object.entries(LABELS).forEach(([id,t])=>{const e=$(id);if(e)e.setAttribute("ari
 $("tabs").setAttribute("role","tablist");
 $("note").setAttribute("aria-live","polite");
 Q("#tabs button").forEach(b=>b.setAttribute("role","tab"));
+Q("#chars button").forEach(b=>b.setAttribute("aria-label",b.title||"Character"));
+const syncTabs=()=>Q("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.classList.contains("on")));
+Q("#tabs button").forEach(b=>b.addEventListener("click",syncTabs));
