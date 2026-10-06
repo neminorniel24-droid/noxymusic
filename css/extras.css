@@ -4,3 +4,5 @@
 #hdrTools>button{padding:6px 12px;border-radius:99px;font-size:.85rem}
 #themes{display:flex;gap:6px;margin-right:6px}
 #themes button{width:18px;height:18px;padding:0;border-radius:50%;border:2px solid transparent}
+#themes button.on{border-color:#fff}
+:focus-visible{outline:2px solid var(--b);outline-offset:2px}
