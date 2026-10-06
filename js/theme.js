@@ -6,3 +6,11 @@ function applyTheme(name){
  store.set("theme",name);
  Q("#themes button").forEach(b=>b.classList.toggle("on",b.title===name));
 }
+(()=>{
+ const w=document.createElement("div");w.id="themes";
+ Object.entries(THEMES).forEach(([n,c])=>{
+  const b=document.createElement("button");b.title=n;b.setAttribute("aria-label",n+" theme");
+  b.style.background=`linear-gradient(135deg,${c[0]},${c[2]})`;b.onclick=()=>applyTheme(n);w.append(b);
+ });
+ headerTools().append(w);applyTheme(store.get("theme")||"Violet");
+})();
