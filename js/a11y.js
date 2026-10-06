@@ -7,3 +7,4 @@ Q("#tabs button").forEach(b=>b.setAttribute("role","tab"));
 Q("#chars button").forEach(b=>b.setAttribute("aria-label",b.title||"Character"));
 const syncTabs=()=>Q("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.classList.contains("on")));
 Q("#tabs button").forEach(b=>b.addEventListener("click",syncTabs));
+syncTabs();
