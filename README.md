@@ -2,6 +2,15 @@
 
 Make music with your hands. Play instruments with hand gestures, DJ with two decks, layer loops, turn any sound into an instrument, add face characters and record it all. Runs fully in the browser.
 
+**Live demo: https://neminorniel24-droid.github.io/noxymusic/**
+
+<p align="center">
+  <img src="docs/screenshots/dj.png" width="49%" alt="DJ decks with transitions, EQ and sound effects">
+  <img src="docs/screenshots/studio.png" width="49%" alt="Looper and sampler">
+  <img src="docs/screenshots/faces.png" width="49%" alt="50 face characters">
+  <img src="docs/screenshots/record.png" width="49%" alt="Video filters and recording options">
+</p>
+
 ## Features
 - Hand-tracked synth: right hand picks the note, left hand sets the volume, notes snap to a scale
 - Song upload with automatic key detection
