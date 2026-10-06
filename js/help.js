@@ -11,3 +11,8 @@ function toggleHelp(){
  h.onclick=e=>{if(e.target===h||e.target.id==="helpClose")h.remove()};
  document.body.append(h);
 }
+(()=>{
+ const b=document.createElement("button");
+ b.textContent="?";b.title="Help";b.setAttribute("aria-label","Help");b.onclick=toggleHelp;
+ headerTools().append(b);
+})();
