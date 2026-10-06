@@ -6,3 +6,5 @@
 #themes button{width:18px;height:18px;padding:0;border-radius:50%;border:2px solid transparent}
 #themes button.on{border-color:#fff}
 :focus-visible{outline:2px solid var(--b);outline-offset:2px}
+#help{position:fixed;inset:0;background:rgba(5,4,12,.8);backdrop-filter:blur(6px);display:grid;place-items:center;z-index:60;padding:16px}
+#help .box{max-width:520px;background:#14122a;border:1px solid var(--ln);border-radius:20px;padding:22px 26px;line-height:1.55;box-shadow:0 0 60px rgba(139,92,246,.3)}
