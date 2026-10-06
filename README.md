@@ -33,6 +33,9 @@ scripts/            local checks (npm run check)
 .github/            Pages workflow, issue and PR templates
 ```
 
+## Keyboard shortcuts
+1-7 effects, Space play or pause, [ ] crossfader, T transition, R record, M metronome, ? help.
+
 ## Browser support
 Chrome and Edge on desktop work best. Canvas video filters are not supported in Safari.
 
