@@ -5,3 +5,8 @@ function toast(text,ms=2600){
  t.textContent=text;t.classList.add("show");
  clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("show"),ms);
 }
+function headerTools(){
+ let h=$("hdrTools");
+ if(!h){h=document.createElement("div");h.id="hdrTools";document.querySelector("header").append(h)}
+ return h;
+}
