@@ -8,3 +8,5 @@
 :focus-visible{outline:2px solid var(--b);outline-offset:2px}
 #help{position:fixed;inset:0;background:rgba(5,4,12,.8);backdrop-filter:blur(6px);display:grid;place-items:center;z-index:60;padding:16px}
 #help .box{max-width:520px;background:#14122a;border:1px solid var(--ln);border-radius:20px;padding:22px 26px;line-height:1.55;box-shadow:0 0 60px rgba(139,92,246,.3)}
+#help h2{margin:0 0 6px}#help p{margin:4px 0;color:var(--dim)}#help .go{margin-top:12px}
+#beat{align-items:center}#beat span{padding:3px 10px;border-radius:99px;background:rgba(0,0,0,.35);border:1px solid var(--ln)}
