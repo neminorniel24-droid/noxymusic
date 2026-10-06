@@ -9,3 +9,5 @@ Space plays or pauses the louder deck. The [ and ] keys move the crossfader. T r
 ## Studio and recording
 M toggles the metronome and R starts or stops recording.
 
+## Help
+Press ? to open the help dialog and Escape to close it.
