@@ -27,7 +27,9 @@ index.html          page markup
 css/                base, stage, panel, components styles
 js/                 core, audio, notes, hands, looper, dj, sampler, faces, record
 assets/             icons
-docs/               architecture, gestures, deploy, roadmap
+docs/               architecture, gestures, deploy, roadmap, FAQ, troubleshooting, accessibility
+sw.js               offline service worker
+scripts/            local checks (npm run check)
 .github/            Pages workflow, issue and PR templates
 ```
 
