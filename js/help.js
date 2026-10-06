@@ -16,3 +16,7 @@ function toggleHelp(){
  b.textContent="?";b.title="Help";b.setAttribute("aria-label","Help");b.onclick=toggleHelp;
  headerTools().append(b);
 })();
+addEventListener("keydown",e=>{
+ if(e.key==="?"&&!/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))toggleHelp();
+ if(e.key==="Escape"&&$("help"))$("help").remove();
+});
