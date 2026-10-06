@@ -32,3 +32,6 @@ function sync(to,from){
  a.playbackRate=Math.min(2,Math.max(.5,BPMS[from]/BPMS[to]));
  toast(`Deck ${to} matched to ${BPMS[from]} BPM`);
 }
+$("syncB").onclick=()=>sync("B","A");
+$("syncA").onclick=()=>sync("A","B");
+$("syncOff").onclick=()=>["A","B"].forEach(k=>D[k].a.playbackRate=1);
