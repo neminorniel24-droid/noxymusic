@@ -9,3 +9,6 @@ Click the page once, then check your volume. Browsers keep audio paused until yo
 ## Hands are not detected
 Use good light, keep your hands in view and avoid a busy background.
 
+## Address already in use
+Another server is using the port. Run `pkill -f http.server` or use another port such as 8001.
+
