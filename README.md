@@ -44,9 +44,10 @@ See [docs/DEPLOY.md](docs/DEPLOY.md). GitHub Pages deploys automatically from `m
 ```
 index.html          page markup
 css/                base, stage, panel, components styles
-js/                 core, audio, notes, hands, looper, dj, sampler, faces, record
+js/                 ES modules: main, state, core, audio, hands, dj, looper and more; lib/ holds pure, tested logic
 assets/             icons
 docs/               architecture, gestures, deploy, roadmap, FAQ, troubleshooting, accessibility
+tests/              unit tests and a full page test in jsdom
 sw.js               offline service worker
 scripts/            local checks (npm run check)
 .github/            Pages workflow, issue and PR templates
@@ -54,6 +55,13 @@ scripts/            local checks (npm run check)
 
 ## Keyboard shortcuts
 1-7 effects, Space play or pause, [ ] crossfader, T transition, R record, M metronome, ? help.
+
+## Development
+```bash
+npm install
+npm start        # http://localhost:8000
+npm run verify   # lint, checks and tests
+```
 
 ## Browser support
 Chrome and Edge on desktop work best. Canvas video filters are not supported in Safari.
