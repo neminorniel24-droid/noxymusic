@@ -1,4 +1,5 @@
 /* NoxyMusic · share button */
+import {headerTools, toast} from "./ui.js";
 (()=>{
  const b=document.createElement("button");
  b.textContent="Share";

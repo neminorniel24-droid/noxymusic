@@ -30,13 +30,25 @@
   <div class="row">Master volume<input id="mv" type="range" min="0" max="2" step=".05" value=".9"></div>
   <p class="small">Tip: upload a song in the DJ tab and your key and scale are set automatically.</p></div>
  <div class="pane" id="p-dj" hidden>
-  <h3>Decks</h3><div id="decks"></div>
+  <div id="turn"><div class="tt"><canvas id="plA" width="340" height="340" role="img" aria-label="Deck A turntable. Drag to scratch, tap the center to play or pause."></canvas></div><div class="tt"><canvas id="plB" width="340" height="340" role="img" aria-label="Deck B turntable. Drag to scratch, tap the center to play or pause."></canvas></div></div>
+  <h3>Decks</h3><div id="decks"><div class="deck"><div class="dh"><b>A</b><span id="nameA" class="small">Upload a song</span></div>
+<div class="fl"><label class="btn" for="fileA">Upload</label><input id="fileA" type="file" accept="audio/*" hidden><button id="playA" disabled>Play</button><button id="cueA">⏮</button><span id="timeA" class="small">0:00</span></div>
+<input id="seekA" type="range" min="0" max="1" step=".001" value="0" style="width:100%"><div class="fl small">Volume <input id="volA" type="range" min="0" max="1" step=".05" value=".8"></div></div><div class="deck"><div class="dh"><b>B</b><span id="nameB" class="small">Upload a song</span></div>
+<div class="fl"><label class="btn" for="fileB">Upload</label><input id="fileB" type="file" accept="audio/*" hidden><button id="playB" disabled>Play</button><button id="cueB">⏮</button><span id="timeB" class="small">0:00</span></div>
+<input id="seekB" type="range" min="0" max="1" step=".001" value="0" style="width:100%"><div class="fl small">Volume <input id="volB" type="range" min="0" max="1" step=".05" value=".8"></div></div></div>
   <div class="fl"><b>A</b><input id="xf" type="range" min="0" max="1" step=".01" value="0" style="flex:1"><b>B</b></div>
   <div class="fl"><select id="tr"><option value="fade">Smooth crossfade</option><option value="sweep">Filter sweep out</option><option value="rise">Build-up in</option><option value="brake">Vinyl brake</option><option value="cut">Hard cut</option></select>
    <input id="trLen" type="range" min="2" max="16" step="1" value="8" style="width:90px"><span id="trv" class="small">8s</span><button id="goT" class="go">Transition</button></div><div id="djMsg" class="small"></div>
+  <div id="beat" class="fl small"><span id="bpmA">A: - BPM</span><span id="bpmB">B: - BPM</span><button id="syncB">Sync B to A</button><button id="syncA">Sync A to B</button><button id="syncOff">Reset speed</button></div>
+  <h3>EQ</h3><div class="eqrow"><b>A</b><label>Low<input id="eqA0" type="range" min="-12" max="12" step="1" value="0"></label><label>Mid<input id="eqA1" type="range" min="-12" max="12" step="1" value="0"></label><label>High<input id="eqA2" type="range" min="-12" max="12" step="1" value="0"></label></div><div class="eqrow"><b>B</b><label>Low<input id="eqB0" type="range" min="-12" max="12" step="1" value="0"></label><label>Mid<input id="eqB1" type="range" min="-12" max="12" step="1" value="0"></label><label>High<input id="eqB2" type="range" min="-12" max="12" step="1" value="0"></label></div>
   <h3>Sound effects (keys 1-7)</h3>
   <div class="pads"><button class="pad" data-fx="horn">📯 Air horn</button><button class="pad" data-fx="siren">🚨 Siren</button><button class="pad" data-fx="laser">🔫 Laser</button><button class="pad" data-fx="scratch">💿 Scratch</button><button class="pad" data-fx="boing">🪀 Boing</button><button class="pad" data-fx="drop">💣 Bass drop</button><button class="pad" data-fx="applause">👏 Applause</button><button class="pad" id="chip">🐿️ Chipmunk</button><button class="pad" id="demon">👹 Demon</button></div>
-  <p class="small">Chipmunk and Demon: hold to speed up or slow down the songs.</p></div>
+  <p class="small">Chipmunk and Demon: hold to speed up or slow down the songs.</p>
+  <h3>DJ lights</h3>
+<div class="fl"><select id="lmode" aria-label="Light show style"><option value="off">Off</option><option value="show">Auto show (vibe)</option><option value="flashes">Dark + sudden flashes</option><option value="beams">Beams</option><option value="disco">Disco spots</option><option value="laser">Laser fan</option><option value="pulse">Pulse</option><option value="strobe">Strobe</option></select><button id="lonly">Lights only (L)</button></div>
+<div class="row">Brightness<input id="lint" type="range" min=".2" max="1" step=".05" value=".8" aria-label="Light brightness"></div>
+<div id="lstat" class="small"></div>
+<p class="small">Auto show follows the tempo of your song and moves through scenes: beams, blackout, sudden flashes, disco, lasers. With no music it runs at 120 BPM. Flashing modes flash at most 3 times a second.</p></div>
  <div class="pane" id="p-studio" hidden>
   <h3>Tempo</h3><div class="row">BPM <span id="bv">100</span><input id="bpm" type="range" min="60" max="160" value="100"></div>
   <div class="row">Loop length<select id="bars"><option value="1">1 bar</option><option value="2" selected>2 bars</option><option value="4">4 bars</option></select></div>
@@ -56,27 +68,5 @@
   <button id="rec" class="go">● Record</button><div id="recInfo" class="small"></div><div id="result"></div></div>
 </aside></main>
 <footer class="small" style="text-align:center;padding:6px 16px 26px">Everything runs in your browser. Your camera, microphone and songs never leave your device. Best in Chrome or Edge. Use headphones when recording with the mic.</footer>
-<script type="module" src="js/mediapipe.js"></script>
-<script src="js/core.js"></script>
-<script src="js/audio.js"></script>
-<script src="js/notes.js"></script>
-<script src="js/hands.js"></script>
-<script src="js/looper.js"></script>
-<script src="js/dj.js"></script>
-<script src="js/sampler.js"></script>
-<script src="js/faces.js"></script>
-<script src="js/record.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/theme.js"></script>
-<script src="js/a11y.js"></script>
-<script src="js/beat.js"></script>
-<script src="js/eq.js"></script>
-<script src="js/shortcuts.js"></script>
-<script src="js/help.js"></script>
-<script src="js/share.js"></script>
-<script src="js/pwa.js"></script>
-<script src="js/lights.js"></script>
-<script src="js/platter.js"></script>
-<script src="js/loud.js"></script>
+<script type="module" src="js/main.js"></script>
 </body></html>

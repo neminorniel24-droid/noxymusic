@@ -1,8 +1,10 @@
 /* NoxyMusic · round turntable decks: spinning vinyl, progress ring, scratch by dragging */
+import {D} from "./state.js";
+import {ensureAudio} from "./audio.js";
+
+import {BPMS} from "./beat.js";
+import {$} from "./core.js";
 (()=>{
- const row=document.createElement("div");row.id="turn";
- row.innerHTML=["A","B"].map(k=>`<div class="tt"><canvas id="pl${k}" width="340" height="340" role="img" aria-label="Deck ${k} turntable. Drag to scratch, tap the center to play or pause."></canvas></div>`).join("");
- $("decks").before(row);
  const ang={A:0,B:0},cvs={A:$("plA"),B:$("plB")},COL={A:["#8b5cf6","#6d28d9"],B:["#22d3ee","#0e7490"]};
  let last=performance.now();
  function draw(k,playing){

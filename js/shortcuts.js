@@ -1,4 +1,10 @@
 /* NoxyMusic · keyboard shortcuts */
+import {D} from "./state.js";
+import {ensureAudio} from "./audio.js";
+
+import {$} from "./core.js";
+import {setX} from "./dj.js";
+import {toast} from "./ui.js";
 addEventListener("keydown",e=>{
  const tg=e.target.tagName;
  if(/INPUT|SELECT|TEXTAREA/.test(tg)||(tg==="BUTTON"&&e.key===" ")||e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;

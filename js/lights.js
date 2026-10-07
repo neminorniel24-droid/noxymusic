@@ -1,16 +1,15 @@
 /* NoxyMusic · DJ lights v2: dark flashes, tempo-aware auto show, full-screen mode */
+import {BPMS} from "./beat.js";
+import {$} from "./core.js";
+import {D, S} from "./state.js";
+import {toast} from "./ui.js";
 (()=>{
  const cvs=document.createElement("canvas");cvs.id="lights";document.body.append(cvs);
  const g=cvs.getContext("2d"),L={mode:"off",only:false,lvl:0,ls:0,sf:0,fx:0,fy:0,fh:0,dirty:false};
- let W=0,H=0,flash=0,hue=260,avg=0,lastBeat=0,lastSynth=0,okFlash=false,spots=[],last=0,bpm=120,beatN=0,scStart=0,scene=0,blackUntil=0,tick=0;
+ let W=0,H=0,flash=0,hue=260,avg=0,lastHit=0,lastSynth=0,okFlash=false,spots=[],last=0,bpm=120,beatN=0,scStart=0,scene=0,blackUntil=0,tick=0;
  const times=[],SCENES=["beams","flashes","disco","laser","pulse","flashes"],FLASHY=["strobe","flashes","show"];
  const fit=()=>{W=cvs.width=innerWidth;H=cvs.height=innerHeight};
  addEventListener("resize",fit);fit();
- $("p-dj").insertAdjacentHTML("beforeend",`<h3>DJ lights</h3>
-<div class="fl"><select id="lmode" aria-label="Light show style"><option value="off">Off</option><option value="show">Auto show (vibe)</option><option value="flashes">Dark + sudden flashes</option><option value="beams">Beams</option><option value="disco">Disco spots</option><option value="laser">Laser fan</option><option value="pulse">Pulse</option><option value="strobe">Strobe</option></select><button id="lonly">Lights only (L)</button></div>
-<div class="row">Brightness<input id="lint" type="range" min=".2" max="1" step=".05" value=".8" aria-label="Light brightness"></div>
-<div id="lstat" class="small"></div>
-<p class="small">Auto show follows the tempo of your song and moves through scenes: beams, blackout, sudden flashes, disco, lasers. With no music it runs at 120 BPM. Flashing modes flash at most 3 times a second.</p>`);
  $("lmode").onchange=()=>{
   const m=$("lmode").value;
   if(FLASHY.includes(m)){
@@ -49,15 +48,15 @@
  }
  function beat(now){
   let b=false;const per=60000/bpm;
-  if(an&&fd){
-   an.getByteFrequencyData(fd);
-   const bass=(fd[0]+fd[1]+fd[2])/765;
-   L.lvl=fd.reduce((s,v)=>s+v,0)/fd.length/255;
+  if(S.an&&S.fd){
+   S.an.getByteFrequencyData(S.fd);
+   const bass=(S.fd[0]+S.fd[1]+S.fd[2])/765;
+   L.lvl=S.fd.reduce((s,v)=>s+v,0)/S.fd.length/255;
    avg=avg*.94+bass*.06;
-   if(L.lvl>.02){if(bass>.3&&bass>avg*1.25&&now-lastBeat>340){b=true;times.push(now);if(times.length>9)times.shift()}}
+   if(L.lvl>.02){if(bass>.3&&bass>avg*1.25&&now-lastHit>340){b=true;times.push(now);if(times.length>9)times.shift()}}
    else if(now-lastSynth>per){b=true;lastSynth=now;L.lvl=.35}
   }else if(now-lastSynth>per){b=true;lastSynth=now;L.lvl=.35}
-  if(b)lastBeat=now;
+  if(b)lastHit=now;
   return b;
  }
  const SC={

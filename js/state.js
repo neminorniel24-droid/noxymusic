@@ -1,0 +1,30 @@
+/* NoxyMusic · shared mutable state (audio nodes, camera, looper). Import as {S}. */
+export const S={
+ ac:undefined,
+ master:undefined,
+ an:undefined,
+ fd:undefined,
+ rec:undefined,
+ bus:undefined,
+ wet:undefined,
+ ew:undefined,
+ djOut:undefined,
+ fxG:undefined,
+ micG:undefined,
+ micStream:undefined,
+ hv:undefined,
+ lm:undefined,
+ stream:undefined,
+ running:false,
+ lastNote:"",
+ lastF:220,
+ filt:"none",
+ lastBeat:-1,
+ loopT0:null,
+ rs:null,
+ tracks:[],
+ sBuf:null,
+ fl:null,
+ ch:""
+};
+export const D={};

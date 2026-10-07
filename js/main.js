@@ -1,0 +1,23 @@
+/* NoxyMusic · entry point. Imports run in this order; each module wires up its own part of the page. */
+import "./core.js";
+import "./audio.js";
+import "./notes.js";
+import "./hands.js";
+import "./looper.js";
+import "./dj.js";
+import "./sampler.js";
+import "./faces.js";
+import "./record.js";
+import "./ui.js";
+import "./storage.js";
+import "./theme.js";
+import "./a11y.js";
+import "./beat.js";
+import "./eq.js";
+import "./shortcuts.js";
+import "./help.js";
+import "./share.js";
+import "./pwa.js";
+import "./lights.js";
+import "./platter.js";
+import "./loud.js";
