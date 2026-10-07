@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="css/extras.css">
 <link rel="stylesheet" href="css/glass.css">
 <link rel="stylesheet" href="css/lights.css">
+<link rel="stylesheet" href="css/platter.css">
 </head><body>
 <noscript>NoxyMusic needs JavaScript to run.</noscript>
 <header><div class="logo"><div class="eq"><i></i><i></i><i></i><i></i></div><h1>Noxy<b>Music</b></h1></div><span class="tag">Play · DJ · Loop · Record</span></header>
@@ -26,7 +27,7 @@
   <h3>Instrument</h3><div class="row">Sound<select id="inst"></select></div><div class="row">Key<select id="key"></select></div><div class="row">Scale<select id="scale"></select></div>
   <div class="row">Play style<select id="mode"><option value="hold">Hand up = sound</option><option value="pinch">Pinch to play</option></select></div>
   <h3>Effects</h3><div class="row">Reverb<input id="rev" type="range" min="0" max="1" step=".05" value=".3"></div><div class="row">Echo<input id="echo" type="range" min="0" max="1" step=".05" value=".15"></div>
-  <div class="row">Master volume<input id="mv" type="range" min="0" max="1" step=".05" value=".9"></div>
+  <div class="row">Master volume<input id="mv" type="range" min="0" max="2" step=".05" value=".9"></div>
   <p class="small">Tip: upload a song in the DJ tab and your key and scale are set automatically.</p></div>
  <div class="pane" id="p-dj" hidden>
   <h3>Decks</h3><div id="decks"></div>
@@ -76,4 +77,6 @@
 <script src="js/share.js"></script>
 <script src="js/pwa.js"></script>
 <script src="js/lights.js"></script>
+<script src="js/platter.js"></script>
+<script src="js/loud.js"></script>
 </body></html>
