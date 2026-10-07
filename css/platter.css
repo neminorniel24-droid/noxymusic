@@ -1,0 +1,6 @@
+/* NoxyMusic · round turntable decks */
+#turn{display:flex;gap:10px;justify-content:center;margin:4px 0 12px}
+.tt{flex:1;max-width:190px}
+.tt canvas{width:100%;aspect-ratio:1;display:block;touch-action:none;cursor:grab;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.07),rgba(255,255,255,.01));box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 44px rgba(139,92,246,.2),inset 0 1px 0 rgba(255,255,255,.2)}
+.tt canvas:active{cursor:grabbing}
+#mvp{min-width:3.2em;text-align:right}
