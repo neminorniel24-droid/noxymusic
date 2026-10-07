@@ -1,0 +1,8 @@
+/* NoxyMusic · DJ lights overlay and lights-only mode */
+#lights{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:40;mix-blend-mode:screen}
+body.lights-only{background:#000;cursor:none}
+body.lights-only::before,body.lights-only::after{display:none}
+body.lights-only>*:not(#lights):not(#exitLights){visibility:hidden}
+body.lights-only #lights{mix-blend-mode:normal;background:#000}
+#exitLights{position:fixed;top:14px;right:14px;z-index:70;opacity:.35;cursor:pointer}
+#exitLights:hover{opacity:1}
