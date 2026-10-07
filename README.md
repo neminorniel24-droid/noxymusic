@@ -27,6 +27,7 @@ Make music with your hands. Play instruments with hand gestures, DJ with two dec
 - Studio: looper with up to 4 layers, metronome, sampler
 - 50 face characters and 10 video filters, recorded into the video
 - Audio and video recording with download
+- DJ lights: beat-reactive light show, with a lights-only full-screen mode
 - BPM detection with deck sync, three-band EQ per deck
 - Themes, keyboard shortcuts, help dialog, offline support
 
