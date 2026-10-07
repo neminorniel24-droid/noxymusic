@@ -11,6 +11,15 @@ Make music with your hands. Play instruments with hand gestures, DJ with two dec
   <img src="docs/screenshots/record.png" width="49%" alt="Video filters and recording options">
 </p>
 
+**Live demo: https://neminorniel24-droid.github.io/noxymusic/**
+
+<p align="center">
+  <img src="docs/screenshots/dj.png" width="49%" alt="DJ decks, EQ and sound effects">
+  <img src="docs/screenshots/studio.png" width="49%" alt="Looper and sampler">
+  <img src="docs/screenshots/faces.png" width="49%" alt="50 face characters">
+  <img src="docs/screenshots/record.png" width="49%" alt="Video filters and recording">
+</p>
+
 ## Features
 - Hand-tracked synth: right hand picks the note, left hand sets the volume, notes snap to a scale
 - Song upload with automatic key detection
