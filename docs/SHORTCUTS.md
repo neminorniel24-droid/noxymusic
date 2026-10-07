@@ -11,3 +11,6 @@ M toggles the metronome and R starts or stops recording.
 
 ## Help
 Press ? to open the help dialog and Escape to close it.
+
+## Lights
+Press L for lights-only mode and Escape to leave it.
