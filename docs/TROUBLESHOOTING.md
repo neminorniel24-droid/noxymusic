@@ -14,3 +14,9 @@ Another server is using the port. Run `pkill -f http.server` or use another port
 
 ## Filters do not show in the recording
 Canvas filters are not supported in Safari. Use Chrome or Edge.
+
+## Party mode: cannot join a room
+Check the 4-character code. The room closes when its creator leaves. Some public Wi-Fi stops devices from talking to each other, so try the same home or phone hotspot network. The free PeerJS server is sometimes down: try again in a minute.
+
+## Party mode: one laptop is early or late
+Use the Sync nudge slider in the Party tab on that laptop. Bluetooth speakers add delay.

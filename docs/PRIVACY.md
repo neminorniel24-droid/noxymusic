@@ -11,3 +11,6 @@ Instrument, key, scale, effects and theme are saved in your browser's local stor
 
 ## Third-party files
 The hand and face tracking libraries and models load from public CDNs, which can see your IP address when they are fetched.
+
+## Party mode
+If you start or join a party room, the song the DJ plays is sent to the other laptops in the room. It goes through the laptop that created the room, and it is never stored on a server. Camera and microphone never leave your laptop. The free PeerJS server and a STUN server see connection details such as IP addresses while laptops find each other.

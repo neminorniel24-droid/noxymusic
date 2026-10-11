@@ -1,7 +1,7 @@
 # Roadmap
 
 ## Next
-- Party mode: connect nearby laptops with a room code, play the same song and lights in sync, and hand control over to whoever starts playing
+- Party mode upgrades: lock a room, set the DJ rotation, show each laptop's delay
 - Phase alignment (true beat-match) for transitions
 - Per-deck effects
 - Hand-controlled DJ effects

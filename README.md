@@ -28,6 +28,7 @@ Make music with your hands. Play instruments with hand gestures, DJ with two dec
 - 50 face characters and 10 video filters, recorded into the video
 - Audio and video recording with download
 - DJ lights: beat-reactive light show, with a lights-only full-screen mode
+- Party mode: connect laptops with a room code to share the same songs, lights and effects
 - BPM detection with deck sync, three-band EQ per deck
 - Themes, keyboard shortcuts, help dialog, offline support
 
@@ -67,10 +68,10 @@ npm run verify   # lint, checks and tests
 Chrome and Edge on desktop work best. Canvas video filters are not supported in Safari.
 
 ## Privacy
-Camera, microphone and uploaded songs stay on the device. Nothing is uploaded to a server.
+Camera, microphone and uploaded songs stay on the device. Nothing is uploaded to a server. In a party room, the song the DJ plays is sent to the other laptops in that room.
 
 ## Documentation
-See the docs folder: ARCHITECTURE, GESTURES, SHORTCUTS, DEPLOY, FAQ, TROUBLESHOOTING, PRIVACY, ACCESSIBILITY, BROWSER_SUPPORT and ROADMAP.
+See the docs folder: ARCHITECTURE, PARTY, GESTURES, SHORTCUTS, DEPLOY, FAQ, TROUBLESHOOTING, PRIVACY, ACCESSIBILITY, BROWSER_SUPPORT and ROADMAP.
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md).

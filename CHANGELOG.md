@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0
+- Party mode: connect laptops with a room code to share songs, lights and effects, and hand control to whoever presses play
+- Light show beats are sent by the DJ laptop so every screen shows the same show
+- Sound effect keys now go through the pads, so they are shared too
+
 ## 2.0.0
 - Converted to ES modules with explicit imports and one shared state object
 - Round turntable decks, tempo-aware light show with dark flashes, volume up to 200% with a limiter

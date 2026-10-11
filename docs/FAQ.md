@@ -14,3 +14,9 @@ The app detects the song's key and sets your scale to match, so your notes sound
 
 ## Which browsers work?
 Chrome and Edge on desktop work best. Safari does not support the video filters.
+
+## Can I connect several laptops?
+Yes. Use the Party tab: one laptop creates a room, the others join with its 4-character code, and they all play the same songs, lights and effects. See docs/PARTY.md.
+
+## Who controls the music in a party room?
+Whoever presses play, uploads a song or starts a transition. The other laptops stop and follow.
