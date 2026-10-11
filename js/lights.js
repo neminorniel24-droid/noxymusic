@@ -2,11 +2,19 @@
 import {BPMS} from "./beat.js";
 import {$} from "./core.js";
 import {D, S} from "./state.js";
+import {rng} from "./lib/party-core.js";
 import {toast} from "./ui.js";
+
+/* Party mode hook: the controller emits every beat, followers push them in and draw exactly that. */
+export const lightsLink={emit:null,remote:false,pending:[],push(ev){
+  const n=(v,lo,hi,d)=>Number.isFinite(+v)?Math.min(hi,Math.max(lo,+v)):d;
+  this.pending.push({seed:n(ev.seed,0,2147483647,1)|0,hue:n(ev.hue,0,360,0),scene:Math.round(n(ev.scene,0,99,0)),bpm:n(ev.bpm,40,240,120),sf:n(ev.sf,0,1,0),fx:n(ev.fx,0,1,.5),fy:n(ev.fy,0,1,.5),fh:n(ev.fh,0,360,0),black:n(ev.black,0,5000,0)});
+  if(this.pending.length>8)this.pending.shift();
+ }};
 (()=>{
  const cvs=document.createElement("canvas");cvs.id="lights";document.body.append(cvs);
  const g=cvs.getContext("2d"),L={mode:"off",only:false,lvl:0,ls:0,sf:0,fx:0,fy:0,fh:0,dirty:false};
- let W=0,H=0,flash=0,hue=260,avg=0,lastHit=0,lastSynth=0,okFlash=false,spots=[],last=0,bpm=120,beatN=0,scStart=0,scene=0,blackUntil=0,tick=0;
+ let W=0,H=0,flash=0,hue=260,avg=0,lastHit=0,lastSynth=0,okFlash=false,spots=[],last=0,bpm=120,beatN=0,scStart=0,scene=0,blackUntil=0,tick=0,seed=1;
  const times=[],SCENES=["beams","flashes","disco","laser","pulse","flashes"],FLASHY=["strobe","flashes","show"];
  const fit=()=>{W=cvs.width=innerWidth;H=cvs.height=innerHeight};
  addEventListener("resize",fit);fit();
@@ -75,7 +83,7 @@ import {toast} from "./ui.js";
    }
   },
   disco(I,t,b){
-   if(b||!spots.length)spots=Array.from({length:9},()=>({x:Math.random()*W,y:Math.random()*H,h:Math.random()*360,r:(.12+Math.random()*.14)*Math.min(W,H)}));
+   if(b||!spots.length){const R=rng(seed);spots=Array.from({length:9},()=>({x:R()*W,y:R()*H,h:R()*360,r:(.12+R()*.14)*Math.min(W,H)}))}
    spots.forEach(s=>{
     const gr=g.createRadialGradient(s.x,s.y,0,s.x,s.y,s.r*(1+flash*.4));
     gr.addColorStop(0,`hsla(${s.h},100%,60%,${Math.min(1,(.35+flash*.5)*I)})`);gr.addColorStop(1,"rgba(0,0,0,0)");
@@ -107,17 +115,27 @@ import {toast} from "./ui.js";
   requestAnimationFrame(draw);
   const dt=Math.min(100,now-last);last=now;
   if(L.mode==="off"&&!L.only){if(L.dirty){g.clearRect(0,0,W,H);L.dirty=false}return}
-  bpm=tempo();const per=60000/bpm,b=beat(now),I=+$("lint").value,t=now/1000;
+  const remote=lightsLink.remote,ev=remote?lightsLink.pending.pop()||null:null;
+  lightsLink.pending.length=0;
+  if(ev)bpm=ev.bpm;else if(!remote)bpm=tempo();
+  const per=60000/bpm,b=remote?!!ev:beat(now),I=+$("lint").value,t=now/1000;
   if(b)beatN++;
+  if(b&&!remote)seed=(Math.random()*2147483647)|0;
   let m=L.mode;
-  if(m==="show"){
+  if(ev){
+   seed=ev.seed;scene=ev.scene;hue=ev.hue;
+   if(ev.sf){L.sf=ev.sf;L.fx=ev.fx*W;L.fy=ev.fy*H;L.fh=ev.fh;L.ls=now}
+   if(ev.black)blackUntil=now+ev.black;
+  }
+  const send=()=>{if(b&&!remote&&lightsLink.emit)lightsLink.emit({seed,hue,scene,bpm,sf:L.ls===now?L.sf:0,fx:L.fx/W,fy:L.fy/H,fh:L.fh,black:blackUntil>now?blackUntil-now:0})};
+  if(m==="show"&&!remote){
    if(b){
     const pos=beatN-scStart;
     if(pos>=8){scene++;scStart=beatN;hue=(hue+70)%360;L.sf=1;L.fx=W/2;L.fy=H/2;L.fh=hue;L.ls=now}
     else if(pos===7)blackUntil=now+per*.9;
    }
-   m=SCENES[scene%SCENES.length];
   }
+  if(m==="show")m=SCENES[scene%SCENES.length];
   L.dirty=true;
   const dark=L.only||L.mode==="flashes"||L.mode==="show";
   cvs.style.mixBlendMode=dark?"normal":"screen";
@@ -125,12 +143,13 @@ import {toast} from "./ui.js";
   if(L.only){g.fillStyle="rgba(0,0,0,.25)";g.fillRect(0,0,W,H)}
   else{g.clearRect(0,0,W,H);if(dark){g.fillStyle="rgba(0,0,0,.93)";g.fillRect(0,0,W,H)}}
   if(++tick%15===0)$("lstat").textContent=`Tempo ${Math.round(bpm)} BPM`+(L.mode==="show"?` · scene: ${m}`:"");
-  if(now<blackUntil){L.sf=0;return}
+  if(now<blackUntil){L.sf=0;send();return}
   g.globalCompositeOperation="lighter";
-  if(b){hue=(hue+(L.mode==="show"?23:47))%360;flash=Math.max(flash,1)}
+  if(b){if(!remote)hue=(hue+(L.mode==="show"?23:47))%360;flash=Math.max(flash,1)}
   flash*=Math.exp(-dt/(per*.22));
   L.sf*=Math.exp(-dt/75);
   const fn=SC[m]||SC.beams;fn(I,t,b,now);
+  send();
   if(L.sf>.04)burst(I,m==="strobe");
  }
  requestAnimationFrame(draw);
