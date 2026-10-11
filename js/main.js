@@ -21,3 +21,4 @@ import "./pwa.js";
 import "./lights.js";
 import "./platter.js";
 import "./loud.js";
+import "./party.js";

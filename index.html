@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="css/glass.css">
 <link rel="stylesheet" href="css/lights.css">
 <link rel="stylesheet" href="css/platter.css">
+<link rel="stylesheet" href="css/party.css">
 </head><body>
 <noscript>NoxyMusic needs JavaScript to run.</noscript>
 <header><div class="logo"><div class="eq"><i></i><i></i><i></i><i></i></div><h1>Noxy<b>Music</b></h1></div><span class="tag">Play · DJ · Loop · Record</span></header>
@@ -22,7 +23,7 @@
   <ol><li>Allow your camera</li><li><b>Right hand</b>: move up and down to change the note</li><li><b>Left hand</b>: raise it for more volume</li><li>Upload a song and every note fits it</li></ol>
   <button id="go" class="go">Start camera</button><div id="err"></div><div class="small">Video stays on your device. DJ and Studio tabs work without the camera.</div></div></div></section>
 <aside class="glass" id="panel">
- <nav id="tabs"><button data-t="play" class="on">Play</button><button data-t="dj">DJ</button><button data-t="studio">Studio</button><button data-t="face">Faces</button><button data-t="rec">Record</button></nav>
+ <nav id="tabs"><button data-t="play" class="on">Play</button><button data-t="dj">DJ</button><button data-t="studio">Studio</button><button data-t="face">Faces</button><button data-t="rec">Record</button><button data-t="party">Party</button></nav>
  <div class="pane" id="p-play">
   <h3>Instrument</h3><div class="row">Sound<select id="inst"></select></div><div class="row">Key<select id="key"></select></div><div class="row">Scale<select id="scale"></select></div>
   <div class="row">Play style<select id="mode"><option value="hold">Hand up = sound</option><option value="pinch">Pinch to play</option></select></div>
@@ -66,7 +67,24 @@
   <h3>Video filter</h3><div class="chips" id="chips"></div>
   <h3>Include</h3><div class="row"><label><input type="checkbox" id="face" checked> My face (camera)</label></div><div class="row"><label><input type="checkbox" id="ovl" checked> Hand overlay and note ladder</label></div><div class="row"><label><input type="checkbox" id="mic"> My microphone</label></div>
   <button id="rec" class="go">● Record</button><div id="recInfo" class="small"></div><div id="result"></div></div>
+<div class="pane" id="p-party" hidden>
+  <div id="partyOff">
+   <h3>Connect laptops</h3>
+   <p class="small">Play the same songs, lights and effects on every laptop. One laptop plays at a time: whoever presses play takes over, and the others stop and follow.</p>
+   <div class="fl"><input id="pname" type="text" placeholder="Name this laptop" maxlength="20" aria-label="Name this laptop"><button id="pcreate" class="go">Create room</button></div>
+   <div class="fl"><input id="pcode" type="text" placeholder="Room code" maxlength="4" aria-label="Room code"><button id="pjoin">Join</button></div>
+  </div>
+  <div id="partyOn" hidden>
+   <h3>Room code</h3><div id="pcodeShow" aria-live="polite"></div>
+   <div class="fl"><button id="pcopy">Copy invite link</button><button id="pleave">Leave room</button></div>
+   <div id="pstatus" aria-live="polite"></div><button id="ptake" class="go">Take control</button>
+   <h3>Connected laptops</h3><ul id="proster"></ul>
+   <h3>Sync nudge</h3><div class="row">Play earlier or later<input id="poff" type="range" min="-300" max="300" step="10" value="0" aria-label="Sync nudge in milliseconds"></div><span id="poffv" class="small">0 ms</span>
+   <div id="pxfer" class="small"></div>
+  </div>
+  <p id="perr" class="small" aria-live="polite"></p>
+ </div>
 </aside></main>
-<footer class="small" style="text-align:center;padding:6px 16px 26px">Everything runs in your browser. Your camera, microphone and songs never leave your device. Best in Chrome or Edge. Use headphones when recording with the mic.</footer>
+<footer class="small" style="text-align:center;padding:6px 16px 26px">Everything runs in your browser. Your camera and microphone never leave your device, and neither do your songs unless you start a party room: then the song you play is sent directly to the laptops in that room. Best in Chrome or Edge. Use headphones when recording with the mic.</footer>
 <script type="module" src="js/main.js"></script>
 </body></html>
