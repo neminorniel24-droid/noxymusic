@@ -6,3 +6,7 @@
 #proster{margin:4px 0;padding-left:18px;line-height:1.7}
 #pstatus{font-size:.9rem;margin:6px 0 10px}
 #perr{color:#fca5a5}
+#prbox{margin:12px 0;padding:8px 12px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12)}
+#prbox summary{cursor:pointer;font-weight:600}
+#prbox input[type=text],#prbox input[type=password]{width:100%;box-sizing:border-box;margin:6px 0;background:rgba(0,0,0,.3);color:var(--fg);border:1px solid var(--ln);border-radius:11px;padding:9px 12px;font:500 .9rem Outfit,sans-serif}
+#prbox .fl input{flex:1;width:auto}

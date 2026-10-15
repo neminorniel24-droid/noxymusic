@@ -4,6 +4,8 @@ import {BPMS} from "./beat.js";
 import {$, Q} from "./core.js";
 import {detectBpm} from "./lib/bpm.js";
 import {Assembler,Hub,cleanCode,makeCode,reconcileDeck,skewFromPings,splitBuffer} from "./lib/party-core.js";
+import {RELAY} from "./config.js";
+import {buildIce,linkKind,turnUrls} from "./lib/ice.js";
 import {lightsLink} from "./lights.js";
 import {D, S} from "./state.js";
 import {toast} from "./ui.js";
@@ -12,9 +14,16 @@ const PEER_URL="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/+esm",MAX_MB=60,CHUNK=
 const q=new URLSearchParams(location.search);
 /* Default is the free PeerJS cloud. To use your own server: ?peerhost=example.com&peerport=443&peerpath=/ */
 const BROKER=q.get("peerhost")?{host:q.get("peerhost"),port:+(q.get("peerport")||443),path:q.get("peerpath")||"/",secure:q.get("peersecure")!=="0"}:{};
-const P={peer:null,conn:null,conns:new Map(),hub:null,isHub:false,me:"",code:"",controller:"",epoch:0,skew:0,roster:[],samples:[],
+const KEY="noxy.relay";
+const P={peer:null,kinds:new Map(),conn:null,conns:new Map(),hub:null,isHub:false,me:"",code:"",controller:"",epoch:0,skew:0,roster:[],samples:[],
  files:new Map(),meta:new Map(),ids:{A:"",B:""},names:{A:"",B:""},asm:new Map(),asked:new Map(),offset:0,lights:{mode:"off",lint:.8},fxLock:false,timer:0,
  label:"Laptop "+(10+Math.floor(Math.random()*90))};
+/* relay settings come from the page address, then this browser, then js/config.js */
+const saved=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch{return{}}};
+const relayCfg=()=>{const s=saved();return{urls:q.get("turn")||s.urls||RELAY.urls,username:q.get("turnuser")||s.username||RELAY.username,credential:q.get("turnpass")||s.credential||RELAY.credential,relayOnly:q.get("relayonly")==="1"||!!s.relayOnly}};
+const peerOpts=()=>({...BROKER,config:buildIce(relayCfg()).config});
+const hasRelay=()=>buildIce(relayCfg()).relay;
+const rosterList=()=>P.hub.roster().map(r=>({...r,link:P.kinds.get(r.id)||""}));
 const hubNow=()=>performance.now()+P.skew,on=()=>!!P.peer&&!!P.me&&(P.isHub||!!P.conn),isCtl=()=>P.controller===P.me;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const myName=()=>($("pname").value.trim()||P.label).slice(0,20);
@@ -27,7 +36,7 @@ const toHub=m=>{if(P.isHub)hubHandle(P.me,m);else if(P.conn)P.conn.send(m)};
 function hubHandle(from,m){
  const h=P.hub;
  switch(m.t){
-  case "hello":h.join(from,m.name);sendTo(from,{t:"welcome",controller:h.controller,epoch:h.epoch});bcast({t:"roster",list:h.roster()});break;
+  case "hello":h.join(from,m.name);sendTo(from,{t:"welcome",controller:h.controller,epoch:h.epoch});bcast({t:"roster",list:rosterList()});break;
   case "ping":sendTo(from,{t:"pong",c:m.c,h:performance.now()});break;
   case "ctl":{const r=h.takeControl(from);if(r)bcast({t:"controller",...r});break}
   case "snap":case "lb":if(h.accept(from,m.epoch))bcast(m,from);break;
@@ -127,10 +136,21 @@ function fail(e){
  leave();$("perr").textContent=text;toast(text);
 }
 function start(){clearInterval(P.timer);P.timer=setInterval(()=>{if(on()&&isCtl())toHub(snapshot())},250);$("perr").textContent="";ui()}
+/* the hub checks how each laptop is linked (direct or through the relay) and tells everyone */
+async function watchLink(c){
+ for(const wait of[1200,4000,10000]){
+  await new Promise(r=>setTimeout(r,wait));
+  if(P.conns.get(c.peer)!==c)return;
+  let k="";try{k=linkKind(await c.peerConnection.getStats())}catch{/* stats are optional */}
+  if(k&&P.kinds.get(c.peer)!==k){P.kinds.set(c.peer,k);const l=rosterList();P.roster=l;bcast({t:"roster",list:l});ui()}
+  if(k)return;
+ }
+}
+const hint=()=>hasRelay()?"":" On a strict network, add a relay under Connection help.";
 function leave(){
  clearInterval(P.timer);
  try{if(P.peer)P.peer.destroy()}catch{/* already closed */}
- P.conns.clear();
+ P.conns.clear();P.kinds.clear();
  Object.assign(P,{peer:null,conn:null,hub:null,isHub:false,me:"",code:"",controller:"",roster:[],epoch:0,skew:0});
  ui();
 }
@@ -138,18 +158,18 @@ async function create(retry=0){
  try{
   const Peer=await loadPeer(),code=makeCode();
   leave();
-  const peer=new Peer("noxy-"+code,BROKER);
+  const peer=new Peer("noxy-"+code,peerOpts());
   P.peer=peer;
   peer.on("open",id=>{
-   P.me=id;P.code=code;P.isHub=true;P.hub=new Hub(id);P.hub.join(id,myName());P.controller=id;P.epoch=0;P.roster=P.hub.roster();start();
+   P.me=id;P.code=code;P.isHub=true;P.hub=new Hub(id);P.hub.join(id,myName());P.controller=id;P.epoch=0;P.roster=rosterList();start();
   });
   peer.on("connection",c=>{
-   c.on("open",()=>P.conns.set(c.peer,c));
+   c.on("open",()=>{P.conns.set(c.peer,c);watchLink(c)});
    c.on("data",m=>hubHandle(c.peer,m));
    c.on("close",()=>{
-    P.conns.delete(c.peer);
+    P.conns.delete(c.peer);P.kinds.delete(c.peer);
     if(P.hub.leave(c.peer))bcast({t:"controller",controller:P.hub.controller,epoch:P.hub.epoch});
-    bcast({t:"roster",list:P.hub.roster()});
+    bcast({t:"roster",list:rosterList()});
    });
   });
   peer.on("error",e=>{if(e.type==="unavailable-id"&&retry<5){peer.destroy();create(retry+1)}else fail(e)});
@@ -161,9 +181,9 @@ async function join(raw){
  try{
   const Peer=await loadPeer();
   leave();
-  const peer=new Peer(undefined,BROKER);
+  const peer=new Peer(undefined,peerOpts());
   P.peer=peer;
-  const timeout=setTimeout(()=>{if(P.peer===peer&&!P.conn)fail("Could not reach that room. Check the code and your network.")},12000);
+  const timeout=setTimeout(()=>{if(P.peer===peer&&!P.conn)fail("Could not reach that room. Check the code and your network."+hint())},12000);
   peer.on("open",id=>{
    P.me=id;
    const c=peer.connect("noxy-"+code,{reliable:true});
@@ -195,7 +215,7 @@ function ui(){
  const who=P.roster.find(r=>r.id===P.controller);
  $("pstatus").textContent=isCtl()?"You are the DJ. Every laptop follows your songs, lights and effects.":`Following ${who?who.name:"another laptop"}. Press play or upload on this laptop to take over.`;
  $("ptake").hidden=isCtl();
- $("proster").innerHTML=P.roster.map(r=>`<li>${esc(r.name)}${r.id===P.me?" (you)":""}${r.id===P.controller?" · DJ":""}</li>`).join("");
+ $("proster").innerHTML=P.roster.map(r=>`<li>${esc(r.name)}${r.id===P.me?" (you)":""}${r.id===P.controller?" · DJ":""}${r.link==="relay"?" · via relay":r.link==="direct"?" · direct":""}</li>`).join("");
 }
 $("pcreate").onclick=()=>{ensureAudio();create()};
 $("pjoin").onclick=()=>{ensureAudio();join($("pcode").value)};
@@ -212,5 +232,20 @@ document.addEventListener("click",e=>{
 },true);
 /* effect pads on the controller are played everywhere */
 Q("[data-fx]").forEach(b=>b.addEventListener("click",()=>{if(on()&&isCtl()&&!P.fxLock)toHub({t:"fx",name:b.dataset.fx})}));
+/* relay settings panel */
+function relayUi(){
+ const c=relayCfg(),s=saved();
+ $("prurls").value=s.urls||"";$("pruser").value=s.username||"";$("prpass").value=s.credential||"";$("prforce").checked=!!s.relayOnly;
+ const n=turnUrls(c.urls).length;
+ $("prstate").textContent=hasRelay()?`Relay is on (${n} address${n===1?"":"es"})${c.relayOnly?", forced":""}.`:"No relay set. Most networks connect without one.";
+}
+$("prsave").onclick=()=>{
+ const v={urls:$("prurls").value.trim(),username:$("pruser").value.trim(),credential:$("prpass").value,relayOnly:$("prforce").checked};
+ try{localStorage.setItem(KEY,JSON.stringify(v))}catch{toast("This browser cannot save the relay settings")}
+ relayUi();
+ toast(hasRelay()?"Relay saved":"Relay needs an address, a user name and a password");
+};
+$("prclear").onclick=()=>{try{localStorage.removeItem(KEY)}catch{/* nothing saved */}relayUi();toast("Relay removed")};
+relayUi();
 const room=q.get("room");
 if(room){$("pcode").value=cleanCode(room);document.querySelector('#tabs button[data-t="party"]').click()}

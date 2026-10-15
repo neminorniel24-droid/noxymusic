@@ -73,6 +73,14 @@
    <p class="small">Play the same songs, lights and effects on every laptop. One laptop plays at a time: whoever presses play takes over, and the others stop and follow.</p>
    <div class="fl"><input id="pname" type="text" placeholder="Name this laptop" maxlength="20" aria-label="Name this laptop"><button id="pcreate" class="go">Create room</button></div>
    <div class="fl"><input id="pcode" type="text" placeholder="Room code" maxlength="4" aria-label="Room code"><button id="pjoin">Join</button></div>
+   <details id="prbox"><summary>Connection help: laptops on different networks</summary>
+    <p class="small">Most laptops connect directly. If one cannot join, a relay server passes the music through the middle. Use free TURN details from a provider such as Metered Open Relay or Cloudflare. Everyone should add the same details, or the site owner can put them in js/config.js.</p>
+    <input id="prurls" type="text" placeholder="turn:your.host:443?transport=tcp" aria-label="Relay addresses, separated by commas" autocomplete="off">
+    <div class="fl"><input id="pruser" type="text" placeholder="User name" aria-label="Relay user name" autocomplete="off"><input id="prpass" type="password" placeholder="Password" aria-label="Relay password" autocomplete="off"></div>
+    <label class="small"><input id="prforce" type="checkbox"> Test mode: send everything through the relay</label>
+    <div class="fl"><button id="prsave">Save relay</button><button id="prclear">Remove</button></div>
+    <p id="prstate" class="small" aria-live="polite"></p>
+   </details>
   </div>
   <div id="partyOn" hidden>
    <h3>Room code</h3><div id="pcodeShow" aria-live="polite"></div>
