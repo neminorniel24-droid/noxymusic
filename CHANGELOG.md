@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.2.0
+- Party mode works across networks: add free TURN relay details under Connection help, or in js/config.js
+- The laptop list shows whether each laptop is linked directly or through the relay
+- Joining failures now suggest a relay when none is set
+
 ## 2.1.0
 - Party mode: connect laptops with a room code to share songs, lights and effects, and hand control to whoever presses play
 - Light show beats are sent by the DJ laptop so every screen shows the same show

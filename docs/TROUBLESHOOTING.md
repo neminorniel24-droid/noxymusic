@@ -20,3 +20,6 @@ Check the 4-character code. The room closes when its creator leaves. Some public
 
 ## Party mode: one laptop is early or late
 Use the Sync nudge slider in the Party tab on that laptop. Bluetooth speakers add delay.
+
+## Party mode: laptops on different networks cannot connect
+Some networks block direct links. Open Party, then Connection help, and add free TURN relay details (see docs/PARTY.md). The laptop list shows `direct` or `via relay` once linked. As a quick fix, put the laptop on the same Wi-Fi or phone hotspot as the room creator.

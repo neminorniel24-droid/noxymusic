@@ -20,3 +20,6 @@ Yes. Use the Party tab: one laptop creates a room, the others join with its 4-ch
 
 ## Who controls the music in a party room?
 Whoever presses play, uploads a song or starts a transition. The other laptops stop and follow.
+
+## Can laptops in different cities or networks join one room?
+Yes, with the room code. Most connect directly. For strict networks add a free relay under Party, Connection help. See docs/PARTY.md.
