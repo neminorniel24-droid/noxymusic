@@ -1,11 +1,30 @@
-#panel{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}
-#tabs{display:flex;gap:4px;background:rgba(0,0,0,.35);padding:4px;border-radius:14px;margin-bottom:12px}
-#tabs button{flex:1;border:0;background:none;padding:9px 0;border-radius:10px;color:var(--dim);font:600 .86rem Outfit}
-#tabs button.on{background:linear-gradient(90deg,var(--a),var(--c));color:#fff;box-shadow:0 4px 18px rgba(139,92,246,.45)}
-h3{margin:14px 0 6px;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}h3:first-child{margin-top:2px}
-.row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0;font-size:.92rem}.row>select,.row>input[type=range]{width:56%}
-.fl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0;font-size:.9rem}
-select,button,.btn{background:rgba(255,255,255,.07);color:var(--fg);border:1px solid var(--ln);padding:8px 13px;border-radius:11px;font:500 .92rem Outfit;cursor:pointer;transition:.15s}
-select{background:#1a1830}button:hover,.btn:hover{border-color:var(--a);box-shadow:0 0 14px rgba(139,92,246,.35)}button:disabled{opacity:.45;cursor:default;box-shadow:none}
-.btn{display:inline-block}.go{background:linear-gradient(90deg,var(--a),var(--c));border:0;font-weight:600;color:#fff}
-input[type=range]{accent-color:var(--a)}.small{font-size:.8rem;color:var(--dim);line-height:1.4}
+/* NoxyMusic · the side panel and its tab bar */
+.side{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+#tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:5px;border-radius:18px;background:rgba(10,8,24,.55);border:1px solid var(--ln);backdrop-filter:blur(14px)}
+#tabs button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0 7px;border:0;border-radius:13px;background:none;box-shadow:none;color:var(--dim);font:600 .72rem/1 var(--font);letter-spacing:.01em;transition:color .15s,background .15s}
+#tabs button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#tabs button:hover{color:var(--fg);background:rgba(255,255,255,.06);border:0;box-shadow:none}
+#tabs button.on{background:linear-gradient(135deg,var(--a),var(--c));color:#fff;box-shadow:0 6px 20px rgba(139,92,246,.45)}
+#panel{flex:1;min-height:0;display:flex;flex-direction:column;padding:0;overflow:hidden}
+.pane{flex:1;min-height:0;overflow:auto;padding:6px 16px 18px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent}
+h3{display:flex;align-items:center;gap:10px;margin:20px 0 9px;font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+h3::after{content:"";flex:1;height:1px;background:var(--ln)}
+.pane>h3:first-child,.pane>div:first-child>h3:first-child{margin-top:14px}
+h3 .soft{font-weight:500;letter-spacing:.04em;text-transform:none;color:#7c7a99}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0;font-size:.93rem}
+.row>select,.row>input[type=range]{width:58%}
+.row label{display:flex;align-items:center;cursor:pointer}
+.fl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:10px 0;font-size:.9rem}
+.fl.nowrap{flex-wrap:nowrap}.fl.between{justify-content:space-between}
+.pane p.small{margin:10px 0}
+details{margin:12px 0}
+summary{cursor:pointer;font-weight:600;font-size:.9rem;padding:4px 0;list-style:none;display:flex;align-items:center;gap:8px}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--dim);border-bottom:2px solid var(--dim);transform:rotate(-45deg);transition:transform .15s;margin:0 4px 0 2px}
+details[open]>summary::before{transform:rotate(45deg)}
+@media(max-width:960px){
+ .side{display:block}
+ #tabs{position:fixed;left:10px;right:10px;bottom:calc(8px + env(safe-area-inset-bottom));z-index:30;box-shadow:0 10px 40px rgba(0,0,0,.6);background:rgba(14,12,32,.88)}
+ #panel{margin-top:12px}
+ .pane{overflow:visible;padding:4px 14px 16px}
+}

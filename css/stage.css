@@ -1,6 +1,42 @@
-#stage{position:relative;background:#000;border-radius:22px;overflow:hidden;aspect-ratio:4/3;width:100%;border:1px solid var(--ln);box-shadow:0 0 80px rgba(139,92,246,.28)}
-video,canvas.ov{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}video{transform:scaleX(-1)}
-#note{position:absolute;left:18px;top:8px;font-size:3rem;font-weight:700;text-shadow:0 0 24px var(--a),0 0 8px var(--b)}
-#intro{position:absolute;inset:0;background:rgba(7,6,15,.85);backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:10px}
-#intro h2{margin:0;font-size:2rem}#intro ol{text-align:left;color:var(--dim);line-height:1.8;margin:4px 0 8px;padding-left:20px}
+/* NoxyMusic · the stage (camera view), the bar under it and friends' video tiles */
+.stagecol{display:flex;flex-direction:column;gap:12px;min-width:0;min-height:0}
+.stagewrap{flex:1;min-height:0;display:grid;place-items:center}
+#stage{position:relative;background:#000;border-radius:24px;overflow:hidden;aspect-ratio:4/3;width:min(100%,calc((100dvh - var(--hh) - var(--fh) - 12px - 12px - 56px)*4/3));border:1px solid var(--ln);box-shadow:0 0 80px rgba(139,92,246,.28)}
+#video,canvas.ov{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#video{transform:scaleX(-1)}
+#note{position:absolute;left:16px;top:10px;font-size:2.6rem;font-weight:700;line-height:1.1;text-shadow:0 0 24px var(--a),0 0 8px var(--b);pointer-events:none}
+/* first screen */
+#intro{position:absolute;inset:0;z-index:4;background:radial-gradient(600px 360px at 50% 0%,rgba(139,92,246,.28),transparent 70%),rgba(7,6,15,.88);backdrop-filter:blur(8px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;gap:18px;overflow:auto}
+.hero{display:flex;flex-direction:column;align-items:center;gap:8px}
+.kicker{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--b);padding:5px 12px;border-radius:99px;border:1px solid rgba(34,211,238,.35);background:rgba(34,211,238,.08)}
+#intro h2{margin:0;font-size:clamp(1.8rem,4.2vw,3rem);line-height:1.05;letter-spacing:-.02em;background:linear-gradient(90deg,#fff,#d8c8ff 50%,#f9a8d4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{margin:0;color:var(--dim);max-width:34ch;font-size:1.02rem;line-height:1.5}
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:min(560px,100%);text-align:left}
+.steps li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--ln);font-size:.92rem;line-height:1.35;color:#d9d6ee}
+.steps i{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:.85rem;background:linear-gradient(135deg,var(--a),var(--c));color:#fff}
+.steps b{color:#fff}
+.cta{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+#go{padding:13px 28px;font-size:1.05rem;border-radius:14px;box-shadow:0 10px 34px rgba(139,92,246,.5)}
 #err{color:#fca5a5;font-size:.9rem;max-width:380px}
+/* bar under the stage */
+#dock{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-height:44px;width:min(100%,calc((100dvh - var(--hh) - var(--fh) - 12px - 12px - 56px)*4/3));margin:0 auto}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:99px;font-size:.84rem;font-weight:500;line-height:1;white-space:nowrap;color:var(--fg);background:rgba(255,255,255,.06);border:1px solid var(--ln);box-shadow:none}
+.chip i{font-style:normal;color:var(--b);font-size:.95rem}.chip i.vi{font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.chip.dim{color:var(--dim);border-color:transparent;background:none}.chip.dim:empty{display:none}
+.grow{flex:1}
+.room i{width:8px;height:8px;border-radius:50%;background:#64748b}
+.room.live{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.1)}.room.live i{background:var(--ok);box-shadow:0 0 10px var(--ok)}
+.cam{border-color:rgba(139,92,246,.6);background:rgba(139,92,246,.18)}
+/* friends' video */
+#vtiles{position:absolute;right:12px;bottom:12px;z-index:5;display:flex;flex-direction:column-reverse;gap:8px;max-height:calc(100% - 24px);overflow:hidden;align-items:flex-end}
+.vt{position:relative;margin:0;width:132px;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,.28);box-shadow:0 8px 24px rgba(0,0,0,.55);cursor:pointer;transition:width .2s}
+.vt video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:none}
+.vt figcaption{position:absolute;left:0;right:0;bottom:0;padding:16px 9px 5px;font-size:.72rem;font-weight:600;background:linear-gradient(transparent,rgba(0,0,0,.75));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vt.big{width:min(300px,62%)}
+@media(max-width:960px){
+ #stage,#dock{width:100%}.stagewrap{display:block}
+ #note{font-size:1.9rem}
+ #intro{gap:12px;padding:14px}.kicker,.lede,#intro>.small{display:none}
+ .steps{gap:6px}.steps li{padding:8px 10px;gap:8px;font-size:.78rem;border-radius:12px}.steps i{width:22px;height:22px;font-size:.75rem}
+ #go{padding:11px 22px;font-size:.98rem}
+ .vt{width:92px}.vt.big{width:70%}
+}
