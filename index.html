@@ -16,14 +16,17 @@
 <link rel="stylesheet" href="css/party.css">
 </head><body>
 <noscript>NoxyMusic needs JavaScript to run.</noscript>
-<header><div class="logo"><div class="eq"><i></i><i></i><i></i><i></i></div><h1>Noxy<b>Music</b></h1></div><span class="tag">Play · DJ · Loop · Record</span></header>
+<header><a class="logo" href="./" aria-label="NoxyMusic home"><div class="eq"><i></i><i></i><i></i><i></i></div><h1>Noxy<b>Music</b></h1></a><span id="pshare" class="live-pill" hidden><i></i>Sharing video</span></header>
 <main>
-<section><div id="stage"><video id="video" playsinline muted></video><canvas id="fc" class="ov"></canvas><canvas id="cv" class="ov"></canvas><div id="note"></div>
- <div id="intro"><h2>Play music in the air</h2>
-  <ol><li>Allow your camera</li><li><b>Right hand</b>: move up and down to change the note</li><li><b>Left hand</b>: raise it for more volume</li><li>Upload a song and every note fits it</li></ol>
-  <button id="go" class="go">Start camera</button><div id="err"></div><div class="small">Video stays on your device. DJ and Studio tabs work without the camera.</div></div></div></section>
+<section class="stagecol"><div class="stagewrap"><div id="stage"><video id="video" playsinline muted></video><canvas id="fc" class="ov"></canvas><canvas id="cv" class="ov"></canvas><div id="note"></div><div id="vtiles" hidden></div>
+ <div id="intro"><div class="hero"><span class="kicker">Hand-gesture music studio</span><h2>Play music in the air</h2><p class="lede">Your hands are the instrument. Free, in your browser, nothing to install.</p></div>
+  <ol class="steps"><li><i>1</i><span>Allow your camera</span></li><li><i>2</i><span><b>Right hand</b> up and down changes the note</span></li><li><i>3</i><span><b>Left hand</b> up for more volume</span></li><li><i>4</i><span>Upload a song and every note fits it</span></li></ol>
+  <div class="cta"><button id="go" class="go">Start camera</button><button id="skip" class="ghost">Just DJ, no camera</button></div><div id="err"></div><div class="small">Video stays on your device. DJ and Studio work without the camera.</div></div></div></div>
+ <div id="dock"><span class="chip" id="dSound" title="Instrument"><i>♪</i><span>Theremin</span></span><span class="chip" id="dKey" title="Key and scale"><i>♯</i><span>C pentatonic</span></span><span class="chip" id="dVol" title="Master volume"><i class="vi">Vol</i><span>90%</span></span>
+  <span class="grow"></span><span class="chip dim" id="vcount"></span><button id="dCam" class="chip cam" hidden>Start camera</button><button id="dRoom" class="chip room" title="Open the Party tab"><i></i><span>Party: not connected</span></button><button id="dFull" class="chip" aria-label="Full screen">⛶</button></div>
+</section>
+<div class="side"><nav id="tabs" aria-label="Sections"><button data-t="play" class="on"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span>Play</span></button><button data-t="dj"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 3a9 9 0 019 9"/></svg><span>DJ</span></button><button data-t="studio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg><span>Studio</span></button><button data-t="face"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg><span>Faces</span></button><button data-t="rec"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg><span>Record</span></button><button data-t="party"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><span>Party</span></button></nav>
 <aside class="glass" id="panel">
- <nav id="tabs"><button data-t="play" class="on">Play</button><button data-t="dj">DJ</button><button data-t="studio">Studio</button><button data-t="face">Faces</button><button data-t="rec">Record</button><button data-t="party">Party</button></nav>
  <div class="pane" id="p-play">
   <h3>Instrument</h3><div class="row">Sound<select id="inst"></select></div><div class="row">Key<select id="key"></select></div><div class="row">Scale<select id="scale"></select></div>
   <div class="row">Play style<select id="mode"><option value="hold">Hand up = sound</option><option value="pinch">Pinch to play</option></select></div>
@@ -69,30 +72,43 @@
   <button id="rec" class="go">● Record</button><div id="recInfo" class="small"></div><div id="result"></div></div>
 <div class="pane" id="p-party" hidden>
   <div id="partyOff">
-   <h3>Connect laptops</h3>
-   <p class="small">Play the same songs, lights and effects on every laptop. One laptop plays at a time: whoever presses play takes over, and the others stop and follow.</p>
-   <div class="fl"><input id="pname" type="text" placeholder="Name this laptop" maxlength="20" aria-label="Name this laptop"><button id="pcreate" class="go">Create room</button></div>
-   <div class="fl"><input id="pcode" type="text" placeholder="Room code" maxlength="4" aria-label="Room code"><button id="pjoin">Join</button></div>
-   <details id="prbox"><summary>Connection help: laptops on different networks</summary>
-    <p class="small">Most laptops connect directly. If one cannot join, a relay server passes the music through the middle. Use free TURN details from a provider such as Metered Open Relay or Cloudflare. Everyone should add the same details, or the site owner can put them in js/config.js.</p>
-    <input id="prurls" type="text" placeholder="turn:your.host:443?transport=tcp" aria-label="Relay addresses, separated by commas" autocomplete="off">
-    <div class="fl"><input id="pruser" type="text" placeholder="User name" aria-label="Relay user name" autocomplete="off"><input id="prpass" type="password" placeholder="Password" aria-label="Relay password" autocomplete="off"></div>
-    <label class="small"><input id="prforce" type="checkbox"> Test mode: send everything through the relay</label>
-    <div class="fl"><button id="prsave">Save relay</button><button id="prclear">Remove</button></div>
+   <div class="hero2"><h3>Vibe together</h3><p class="small">Connect laptops anywhere, even in different cities. Everyone hears the same songs and sees the same lights and effects. Whoever presses play becomes the DJ.</p></div>
+   <div class="card"><label class="lab" for="pname">Your name</label><input id="pname" type="text" placeholder="Name this laptop" maxlength="20" autocomplete="nickname">
+    <button id="pcreate" class="go wide">Create a room</button>
+    <div class="or"><span>or join a friend</span></div>
+    <div class="fl nowrap"><input id="pcode" type="text" placeholder="CODE" maxlength="4" aria-label="Room code" autocomplete="off"><button id="pjoin">Join</button></div></div>
+   <p id="pwait" class="small wait" aria-live="polite"></p>
+   <div class="card"><div class="fl between"><b>Check my connection</b><button id="pcheck">Test</button></div>
+    <div id="pcheckres" class="check" aria-live="polite"><b id="pct">Not tested yet</b><span id="pca">Takes a few seconds. Tells you if your network can connect to friends.</span></div></div>
+   <details id="prbox"><summary>Connection help: friends on different networks</summary>
+    <p class="small">Phone hotspots and many home connections block direct links. A relay passes the music through the middle so anyone can join. A free shared relay is used automatically. For the most reliable party, make your own free account at a TURN provider such as Metered, copy its credentials link and paste it here. Everyone in the room should add it.</p>
+    <label class="lab" for="prlink">Relay link (https)</label><input id="prlink" type="text" placeholder="https://yourapp.metered.live/api/v1/turn/credentials?apiKey=..." autocomplete="off">
+    <details class="sub"><summary>Or enter the details by hand</summary>
+     <input id="prurls" type="text" placeholder="turn:your.host:443?transport=tcp" aria-label="Relay addresses, separated by commas" autocomplete="off">
+     <div class="fl nowrap"><input id="pruser" type="text" placeholder="User name" aria-label="Relay user name" autocomplete="off"><input id="prpass" type="password" placeholder="Password" aria-label="Relay password" autocomplete="off"></div></details>
+    <label class="sw small"><input id="prshared" type="checkbox" checked> <span>Use the free shared relay when a direct link fails</span></label>
+    <label class="sw small"><input id="prforce" type="checkbox"> <span>Test mode: send everything through the relay</span></label>
+    <div class="fl"><button id="prsave" class="go">Save relay</button><button id="prclear">Remove</button></div>
     <p id="prstate" class="small" aria-live="polite"></p>
    </details>
   </div>
   <div id="partyOn" hidden>
-   <h3>Room code</h3><div id="pcodeShow" aria-live="polite"></div>
-   <div class="fl"><button id="pcopy">Copy invite link</button><button id="pleave">Leave room</button></div>
-   <div id="pstatus" aria-live="polite"></div><button id="ptake" class="go">Take control</button>
-   <h3>Connected laptops</h3><ul id="proster"></ul>
-   <h3>Sync nudge</h3><div class="row">Play earlier or later<input id="poff" type="range" min="-300" max="300" step="10" value="0" aria-label="Sync nudge in milliseconds"></div><span id="poffv" class="small">0 ms</span>
+   <div class="card roomcard"><span class="lab">Room code</span><button id="pcodeShow" class="code" aria-live="polite" title="Copy the code"></button>
+    <div class="fl nowrap"><button id="pcopy" class="grow">Copy invite link</button><button id="pwa" class="grow wa">WhatsApp</button></div></div>
+   <div id="pstatus" class="banner" aria-live="polite"></div><button id="ptake" class="go wide">Take control</button>
+   <h3>Connected laptops</h3><ul id="proster" class="people"></ul>
+   <h3>Video <span class="soft">optional</span></h3>
+   <div class="card slim"><label class="sw"><input id="pvid" type="checkbox"> <span>Share my video</span></label>
+    <div class="row slimrow">Show<select id="pvmode" aria-label="What to share"><option value="fx">Stage view</option><option value="cam">Camera only</option></select></div>
+    <label class="sw"><input id="psee" type="checkbox" checked> <span>Show friends' videos</span></label>
+    <p class="small">Small and low quality on purpose. Off until you turn it on. It stops when you leave the room.</p></div>
+   <details><summary>Sync nudge</summary><div class="row">Play earlier or later<input id="poff" type="range" min="-300" max="300" step="10" value="0" aria-label="Sync nudge in milliseconds"></div><span id="poffv" class="small">0 ms</span></details>
    <div id="pxfer" class="small"></div>
+   <button id="pleave" class="danger wide">Leave room</button>
   </div>
   <p id="perr" class="small" aria-live="polite"></p>
  </div>
-</aside></main>
-<footer class="small" style="text-align:center;padding:6px 16px 26px">Everything runs in your browser. Your camera and microphone never leave your device, and neither do your songs unless you start a party room: then the song you play is sent directly to the laptops in that room. Best in Chrome or Edge. Use headphones when recording with the mic.</footer>
+</aside></div></main>
+<footer><span>Everything runs in your browser. Camera and microphone never leave your device.</span><span>Songs are shared only inside a party room. Best in Chrome or Edge. Use headphones when recording.</span></footer>
 <script type="module" src="js/main.js"></script>
 </body></html>

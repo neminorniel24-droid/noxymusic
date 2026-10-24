@@ -10,7 +10,7 @@ const raf=[];let now=0;
 const pump=n=>{for(let i=0;i<n;i++){now+=16.7;raf.splice(0).forEach(f=>f(now))}};
 const set=(k,v)=>Object.defineProperty(globalThis,k,{value:v,configurable:true,writable:true});
 function FakeAudio(){return Object.assign(new w.EventTarget(),{src:"",paused:true,currentTime:0,duration:0,loop:false,playbackRate:1,play(){this.paused=false;return Promise.resolve()},pause(){this.paused=true}})}
-Object.entries({window:w,document:d,localStorage:w.localStorage,Event:w.Event,Option:w.Option,Audio:FakeAudio,AudioContext:function(){return ac},
+Object.entries({window:w,document:d,MutationObserver:w.MutationObserver,localStorage:w.localStorage,Event:w.Event,Option:w.Option,Audio:FakeAudio,AudioContext:function(){return ac},
  MediaRecorder:Object.assign(class{start(){this.state="recording"}stop(){this.state="inactive";this.onstop&&this.onstop()}},{isTypeSupported:()=>true}),MediaStream:class{constructor(t){this.t=t}},requestAnimationFrame:f=>raf.push(f),innerWidth:1280,innerHeight:720,
  addEventListener:w.addEventListener.bind(w),matchMedia:()=>({matches:false}),confirm:()=>true,location:w.location,
  navigator:{mediaDevices:{getUserMedia:async()=>({getVideoTracks:()=>[{}],getTracks:()=>[]})},clipboard:{writeText:async()=>{}}}}).forEach(([k,v])=>set(k,v));

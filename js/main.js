@@ -22,3 +22,4 @@ import "./lights.js";
 import "./platter.js";
 import "./loud.js";
 import "./party.js";
+import "./dock.js";
