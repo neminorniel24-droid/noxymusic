@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.3.0
+- Party mode works for friends in different places: a free shared relay steps in when a direct link fails, with your own relay or provider link as the better option
+- Laptops reconnect by themselves after a drop, the list shows each friend's delay and whether they are direct or via relay, and Check my connection explains what your network can do
+- Optional small video sharing in a room (off by default)
+- New bar under the stage with the instrument, key, volume, room and full screen; WhatsApp invite
+- Layout fix: the page keeps a fixed height, so the stage no longer drifts down on long tabs and the side panel scrolls on its own
+
 ## 2.2.0
 - Party mode works across networks: add free TURN relay details under Connection help, or in js/config.js
 - The laptop list shows whether each laptop is linked directly or through the relay

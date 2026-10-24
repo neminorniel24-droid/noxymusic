@@ -23,3 +23,6 @@ Whoever presses play, uploads a song or starts a transition. The other laptops s
 
 ## Can laptops in different cities or networks join one room?
 Yes, with the room code. Most connect directly. For strict networks add a free relay under Party, Connection help. See docs/PARTY.md.
+
+## Can friends see each other?
+Yes, optionally. In Party, turn on Share my video. It is small, low quality and off by default.

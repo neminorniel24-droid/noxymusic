@@ -11,6 +11,8 @@ NoxyMusic is a static site: no backend. The code is plain ES modules loaded from
 - `notes.js`, `hands.js`: scale and note ladder, hand tracking and the main animation loop
 - `looper.js`, `dj.js`, `sampler.js`, `faces.js`, `record.js`: the looper, DJ decks and effects, sampler, face characters, recording
 - `beat.js`, `eq.js`, `platter.js`, `lights.js`, `loud.js`: BPM sync, EQ sliders, round decks, light show, volume
+- `party.js`, `party-state.js`, `video.js`, `netcheck.js`, `config.js`: party mode (rooms, songs, DJ takeover, relay settings, optional video, connection test). `lib/party-core.js` and `lib/ice.js` hold the pure, tested rules
+- `dock.js`: the bar under the stage
 - `ui.js`, `storage.js`, `theme.js`, `a11y.js`, `shortcuts.js`, `help.js`, `share.js`, `pwa.js`: toasts, saved settings, themes, accessibility, shortcuts, help, sharing, offline
 - `party.js`: room codes, song transfer and the DJ takeover. `lib/party-core.js` holds its pure, tested rules
 - `lib/`: pure logic with no DOM (music math, key detection, BPM detection). These files must not import anything outside `lib/`, and they are unit tested.

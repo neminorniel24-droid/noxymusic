@@ -23,3 +23,6 @@ Use the Sync nudge slider in the Party tab on that laptop. Bluetooth speakers ad
 
 ## Party mode: laptops on different networks cannot connect
 Some networks block direct links. Open Party, then Connection help, and add free TURN relay details (see docs/PARTY.md). The laptop list shows `direct` or `via relay` once linked. As a quick fix, put the laptop on the same Wi-Fi or phone hotspot as the room creator.
+
+## Party mode: a friend cannot join or keeps dropping
+Open Party and press Test under Check my connection on that laptop. If it says the shared relay did not answer, add your own free relay under Connection help (see docs/PARTY.md), or switch that laptop to the same Wi-Fi or hotspot as the room creator. The creator should be the laptop with the best internet.

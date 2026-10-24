@@ -16,3 +16,5 @@ The hand and face tracking libraries and models load from public CDNs, which can
 If you start or join a party room, the song the DJ plays is sent to the other laptops in the room. It goes through the laptop that created the room, and it is never stored on a server. Camera and microphone never leave your laptop. The free PeerJS server and a STUN server see connection details such as IP addresses while laptops find each other.
 
 If you add a relay (TURN server) for party mode, it carries the room's encrypted traffic between laptops that cannot connect directly. Its provider can see who connected and how much data moved.
+
+If a direct link between laptops fails, party mode uses a relay (the free shared one, or your own). It carries the room's encrypted traffic, and its provider can see who connected and how much data moved. Video sharing is off until you turn on Share my video; your video then goes through the room creator's laptop to the others, and stops when you leave.

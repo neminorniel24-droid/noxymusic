@@ -28,7 +28,7 @@ Make music with your hands. Play instruments with hand gestures, DJ with two dec
 - 50 face characters and 10 video filters, recorded into the video
 - Audio and video recording with download
 - DJ lights: beat-reactive light show, with a lights-only full-screen mode
-- Party mode: connect laptops with a room code to share the same songs, lights and effects
+- Party mode: connect laptops with a room code to share the same songs, lights and effects, with optional small video sharing and a built-in relay for friends on different networks
 - BPM detection with deck sync, three-band EQ per deck
 - Themes, keyboard shortcuts, help dialog, offline support
 
