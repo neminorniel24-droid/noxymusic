@@ -1,5 +1,5 @@
 import test from "node:test";import assert from "node:assert/strict";
-import {makeCode,cleanCode,rng,skewFromPings,reconcileDeck,splitBuffer,Assembler,Hub} from "../js/lib/party-core.js";
+import {SYNC,makeCode,cleanCode,rng,skewFromPings,reconcileDeck,splitBuffer,Assembler,Hub} from "../js/lib/party-core.js";
 
 test("room codes are 4 easy-to-read characters",()=>{for(let i=0;i<300;i++)assert.match(makeCode(),/^[A-HJ-NP-Z2-9]{4}$/)});
 test("typed codes are cleaned up",()=>assert.equal(cleanCode(" ab-c1d9 "),"ABC1"));
@@ -12,23 +12,57 @@ test("clock skew trusts the fastest round trip",()=>{
  assert.equal(skewFromPings([{rtt:80,skew:10},{rtt:12,skew:-5},{rtt:40,skew:3}]),-5);
  assert.equal(skewFromPings([]),0);
 });
+test("when several pings are about equally fast, their middle value is used, so one odd reply cannot move the clock",()=>{
+ const fast=[{rtt:20,skew:4},{rtt:22,skew:6},{rtt:21,skew:5},{rtt:25,skew:5.5},{rtt:19,skew:20}];
+ assert.equal(skewFromPings(fast),5.5);
+ assert.equal(skewFromPings([...fast,{rtt:300,skew:-400}]),5.5,"slow replies are ignored");
+});
 
 test("a follower starts a deck the controller is playing, at the right position",()=>{
  const r=reconcileDeck({playing:false,pos:0,rate:1},{playing:true,pos:10,rate:1,at:1000},1500);
- assert.equal(r.play,true);assert.ok(Math.abs(r.seek-10.5)<1e-9);
+ assert.equal(r.play,true);assert.ok(Math.abs(r.seek-(10.5+SYNC.lead))<1e-9,"it aims a little ahead, because starting takes a moment");
+ assert.equal(reconcileDeck({playing:false,pos:10.5,rate:1},{playing:true,pos:10,rate:1,at:1000},1500).seek,undefined,"already in place: no jump");
 });
-test("small drift is left alone and big drift is corrected",()=>{
+test("tiny drift is left alone, small drift is nudged smoothly, big drift is a jump",()=>{
  const snap={playing:true,pos:10,rate:1,at:0};
- assert.equal(reconcileDeck({playing:true,pos:10.55,rate:1},snap,500).seek,undefined);
- assert.ok(Math.abs(reconcileDeck({playing:true,pos:12,rate:1},snap,500).seek-10.5)<1e-9);
+ const tiny=reconcileDeck({playing:true,pos:10.505,rate:1},snap,500);assert.equal(tiny.seek,undefined);assert.equal(tiny.rate,undefined);
+ const ahead=reconcileDeck({playing:true,pos:10.6,rate:1},snap,500);assert.equal(ahead.seek,undefined);assert.ok(ahead.rate<1&&ahead.rate>=.95,"ahead: slow down a little");
+ const behind=reconcileDeck({playing:true,pos:10.4,rate:1},snap,500);assert.equal(behind.seek,undefined);assert.ok(behind.rate>1&&behind.rate<=1.05,"behind: speed up a little");
+ const far=reconcileDeck({playing:true,pos:12,rate:1},snap,500,{},{});assert.ok(Math.abs(far.seek-(10.5+SYNC.lead))<1e-9);
+});
+test("the speed change never goes beyond 5% and comes back to normal when in place",()=>{
+ const snap={playing:true,pos:10,rate:1,at:0};
+ assert.ok(Math.abs(reconcileDeck({playing:true,pos:11,rate:1},snap,500,{},{seekAt:500}).rate-.95)<1e-9);
+ assert.equal(reconcileDeck({playing:true,pos:10.5,rate:.97},snap,500).rate,1,"back to normal speed");
+});
+test("after a jump, another jump waits for the cooldown",()=>{
+ const snap={playing:true,pos:10,rate:1,at:0},mem={};
+ assert.ok(reconcileDeck({playing:true,pos:20,rate:1},snap,500,{},mem).seek!==undefined);
+ assert.equal(reconcileDeck({playing:true,pos:20,rate:1},snap,1000,{},mem).seek,undefined,"too soon");
+ assert.ok(reconcileDeck({playing:true,pos:20,rate:1},snap,500+SYNC.cooldown+10,{},mem).seek!==undefined,"after the cooldown");
+});
+test("a jump that landed short makes the next jump aim further ahead",()=>{
+ const snap={playing:true,pos:10,rate:1,at:0},mem={};
+ reconcileDeck({playing:true,pos:20,rate:1},snap,500,{},mem);
+ const again=reconcileDeck({playing:true,pos:10.9,rate:1},{...snap,pos:11.6},700+SYNC.cooldown,{},mem);
+ assert.ok(again.seek>11.6+.2+SYNC.lead,"it must lead by more than the first time");
+});
+test("a buffering deck is left alone",()=>{
+ assert.deepEqual(reconcileDeck({playing:true,pos:3,rate:1,stalled:true},{playing:true,pos:10,rate:1,at:0},500),{});
 });
 test("a paused controller pauses the followers",()=>{
  const r=reconcileDeck({playing:true,pos:9,rate:1},{playing:false,pos:9,rate:1,at:0},999);
  assert.equal(r.pause,true);assert.equal(r.seek,undefined);
 });
-test("the sync nudge moves the target and the playback rate is copied",()=>{
- const r=reconcileDeck({playing:true,pos:10.5,rate:1},{playing:true,pos:10,rate:1.05,at:0},500,200);
- assert.equal(r.rate,1.05);assert.ok(r.seek>10.7);
+test("the sync nudge and a slower speaker both move the target, and the controller's playback rate is copied",()=>{
+ const r=reconcileDeck({playing:true,pos:10.5,rate:1},{playing:true,pos:10,rate:1.05,at:0},500,{offsetMs:200});
+ assert.ok(r.rate>1&&r.rate!==undefined);
+ const far=reconcileDeck({playing:true,pos:10.5,rate:1},{playing:true,pos:10,rate:1.05,at:0},500,{offsetMs:900},{});
+ assert.ok(far.seek>11.2);
+ const slow=reconcileDeck({playing:true,pos:10.5,rate:1},{playing:true,pos:10,rate:1,at:0,ol:20},500,{latencyMs:220});
+ assert.ok(slow.rate>1,"this laptop's sound comes out 200 ms later, so it plays ahead");
+ const same=reconcileDeck({playing:true,pos:10.5,rate:1},{playing:true,pos:10,rate:1,at:0},500,{latencyMs:220});
+ assert.equal(same.rate,undefined,"if the controller's delay is unknown, nothing is assumed");
 });
 test("the target position never goes below zero",()=>assert.equal(reconcileDeck({playing:true,pos:5,rate:1},{playing:true,pos:0,rate:1,at:0},-3000).seek,0));
 
