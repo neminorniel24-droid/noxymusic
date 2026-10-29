@@ -1,6 +1,6 @@
 {
   "name": "noxymusic",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": true,
   "type": "module",
   "description": "Play, DJ, loop and record music with your hands in the browser",

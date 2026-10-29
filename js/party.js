@@ -14,6 +14,8 @@ import {videoAttach,videoStop,videoSync} from "./video.js";
 
 const PEER_URL="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/+esm",MAX_MB=60,CHUNK=32768,MAX_CHUNKS=Math.ceil(MAX_MB*1e6/CHUNK)+1;
 const hubNow=()=>performance.now()+P.skew;
+/* how long this laptop takes to get sound out of its speakers (0 when the browser cannot say) */
+const outMs=()=>{const a=S.ac;if(!a)return 0;const n=(typeof a.outputLatency==="number"?a.outputLatency:0)+(typeof a.baseLatency==="number"?a.baseLatency:0);return Math.round(Math.min(500,Math.max(0,n*1000)))};
 const myName=()=>($("pname").value.trim()||P.label).slice(0,20);
 const loadPeer=async()=>{const m=await import(PEER_URL);return m.Peer||m.default};
 const peerOpts=async()=>({...BROKER,config:(await iceConfig()).config});
@@ -41,8 +43,13 @@ function hubHandle(from,m){
 }
 function onMsg(m){
  switch(m.t){
-  case "welcome":P.controller=m.controller;P.epoch=m.epoch;ping();ui();break;
-  case "pong":{const now=performance.now();P.samples.push({rtt:now-m.c,skew:m.h+(now-m.c)/2-now});if(P.samples.length>=3)P.skew=skewFromPings(P.samples);if(P.samples.length===5){P.rtt=Math.min(...P.samples.map(s=>s.rtt));if(!P.isHub)toHub({t:"q",ms:P.rtt})}break}
+  case "welcome":P.controller=m.controller;P.epoch=m.epoch;P.samples=[];ping();ui();break;
+  case "pong":{
+   /* a rolling window of recent pings keeps the shared clock steady, and one slow reply cannot throw it off */
+   const now=performance.now();P.samples.push({rtt:now-m.c,skew:m.h+(now-m.c)/2-now});if(P.samples.length>24)P.samples.shift();
+   if(P.samples.length>=3)P.skew=skewFromPings(P.samples);
+   if(P.samples.length>=5){P.rtt=Math.min(...P.samples.slice(-8).map(s=>s.rtt));if(!P.isHub)toHub({t:"q",ms:P.rtt})}
+   break}
   case "roster":P.roster=Array.isArray(m.list)?m.list.slice(0,50):[];ui();videoSync();break;
   case "bye":P.closed=true;break;
   case "controller":{const was=isCtl();P.controller=m.controller;P.epoch=m.epoch;if(was&&!isCtl())stopLocal();ui();break}
@@ -54,12 +61,12 @@ function onMsg(m){
   case "chunk":receive(m);break;
  }
 }
-const ping=()=>{P.samples=[];for(let i=0;i<5;i++)setTimeout(()=>toHub({t:"ping",c:performance.now()}),i*150)};
+const ping=()=>{for(let i=0;i<8;i++)setTimeout(()=>toHub({t:"ping",c:performance.now()}),i*120)};
 const stopLocal=()=>["A","B"].forEach(k=>D[k].a.pause());
 
 /* ---- the controller describes the whole room 4 times a second; followers copy it ---- */
 const deckSnap=k=>{const a=D[k].a;return{id:P.ids[k],name:P.names[k],playing:!!a.src&&!a.paused,pos:a.currentTime||0,rate:a.playbackRate,vol:+$("vol"+k).value}};
-const snapshot=()=>({t:"snap",epoch:P.epoch,at:hubNow(),xf:+$("xf").value,A:deckSnap("A"),B:deckSnap("B"),lights:{mode:$("lmode").value,lint:+$("lint").value}});
+const snapshot=()=>({t:"snap",epoch:P.epoch,at:hubNow(),ol:outMs(),xf:+$("xf").value,A:deckSnap("A"),B:deckSnap("B"),lights:{mode:$("lmode").value,lint:+$("lint").value}});
 async function detectFor(k,id){
  try{
   const buf=await S.ac.decodeAudioData(await P.files.get(id).arrayBuffer());
@@ -71,9 +78,20 @@ function loadDeck(k,id,name){
  P.ids[k]=id;P.names[k]=name;$("name"+k).textContent=name;$("play"+k).disabled=false;
  detectFor(k,id);
 }
+let syncAt=0;
+/* the live readout: how far this laptop is from the DJ right now */
+function syncUi(e){
+ const el=$("psync"),now=performance.now();
+ if(!el||now-syncAt<400)return;
+ syncAt=now;
+ if(e===null){el.textContent="";el.className="small";return}
+ const ms=Math.round(Math.abs(e)*1000),k=ms<=30?["good",`In sync (${ms} ms)`]:ms<=220?["ok",`Adjusting (${ms} ms off)`]:["slow","Catching up..."];
+ el.className="small "+k[0];el.textContent=k[1];
+}
 function follow(m){
- if(!m.A||!m.B||!m.lights)return;
+ if(!m.A||!m.B||!m.lights||!Number.isFinite(m.at))return;
  ensureAudio();
+ let worst=null;
  for(const k of["A","B"]){
   const s=m[k],a=D[k].a;
   if(!s.id)continue;
@@ -85,7 +103,9 @@ function follow(m){
    }
    loadDeck(k,s.id,s.name);
   }
-  const r=reconcileDeck({playing:!a.paused,pos:a.currentTime,rate:a.playbackRate},s,hubNow(),P.offset);
+  a.preservesPitch=a.mozPreservesPitch=a.webkitPreservesPitch=true;
+  const r=reconcileDeck({playing:!a.paused,pos:a.currentTime,rate:a.playbackRate,stalled:a.readyState<3&&!a.paused},{...s,at:m.at,ol:m.ol},hubNow(),{offsetMs:P.offset,latencyMs:outMs()},P.mem[k]);
+  if(Number.isFinite(r.err)&&(worst===null||Math.abs(r.err)>Math.abs(worst)))worst=r.err;
   if(r.seek!==undefined&&Number.isFinite(r.seek))a.currentTime=r.seek;
   if(r.rate&&Number.isFinite(r.rate))a.playbackRate=Math.min(4,Math.max(.25,r.rate));
   if(r.play)a.play().catch(()=>{});
@@ -93,6 +113,7 @@ function follow(m){
   const v=$("vol"+k);
   if(+v.value!==s.vol){v.value=s.vol;v.dispatchEvent(new Event("input"))}
  }
+ syncUi(worst);
  const xf=$("xf");
  if(Math.abs(+xf.value-m.xf)>.005){xf.value=m.xf;xf.dispatchEvent(new Event("input"))}
  if(m.lights.mode!==P.lights.mode){P.lights.mode=m.lights.mode;const e=$("lmode");e.value=m.lights.mode;e.dispatchEvent(new Event("change"))}
@@ -157,8 +178,8 @@ function leave(){P.gen++;teardown()}
 function fail(e){const text=friendly(e);leave();$("perr").textContent=text;toast(text)}
 function start(){
  clearInterval(P.timer);clearInterval(P.qt);
- P.timer=setInterval(()=>{if(on()&&isCtl())toHub(snapshot())},250);
- P.qt=setInterval(()=>{if(on()&&!P.isHub)ping()},8000);
+ P.timer=setInterval(()=>{if(on()&&isCtl())toHub(snapshot())},125);
+ P.qt=setInterval(()=>{if(on()&&!P.isHub)toHub({t:"ping",c:performance.now()})},4000);
  $("perr").textContent="";setWait("");ui();
 }
 /* the connection server sometimes drops us while laptops stay linked: ask for it back */
@@ -279,6 +300,7 @@ function ui(){
  $("pcodeShow").textContent=P.code;
  const who=P.roster.find(r=>r.id===P.controller);
  $("pstatus").textContent=isCtl()?"You are the DJ. Every laptop follows your songs, lights and effects.":`Following ${who?who.name:"another laptop"}. Press play or upload on this laptop to take over.`;
+ if(isCtl()){$("psync").textContent="";$("psync").className="small"}
  $("ptake").hidden=isCtl();
  $("proster").innerHTML=P.roster.map(person).join("");
 }

@@ -95,14 +95,14 @@
   <div id="partyOn" hidden>
    <div class="card roomcard"><span class="lab">Room code</span><button id="pcodeShow" class="code" aria-live="polite" title="Copy the code"></button>
     <div class="fl nowrap"><button id="pcopy" class="grow">Copy invite link</button><button id="pwa" class="grow wa">WhatsApp</button></div></div>
-   <div id="pstatus" class="banner" aria-live="polite"></div><button id="ptake" class="go wide">Take control</button>
+   <div id="pstatus" class="banner" aria-live="polite"></div><div id="psync" class="small" aria-live="off"></div><button id="ptake" class="go wide">Take control</button>
    <h3>Connected laptops</h3><ul id="proster" class="people"></ul>
    <h3>Video <span class="soft">optional</span></h3>
    <div class="card slim"><label class="sw"><input id="pvid" type="checkbox"> <span>Share my video</span></label>
     <div class="row slimrow">Show<select id="pvmode" aria-label="What to share"><option value="fx">Stage view</option><option value="cam">Camera only</option></select></div>
     <label class="sw"><input id="psee" type="checkbox" checked> <span>Show friends' videos</span></label>
     <p class="small">Small and low quality on purpose. Off until you turn it on. It stops when you leave the room.</p></div>
-   <details><summary>Sync nudge</summary><div class="row">Play earlier or later<input id="poff" type="range" min="-300" max="300" step="10" value="0" aria-label="Sync nudge in milliseconds"></div><span id="poffv" class="small">0 ms</span></details>
+   <details><summary>Sync nudge</summary><div class="row">Play earlier or later<input id="poff" type="range" min="-500" max="500" step="5" value="0" aria-label="Sync nudge in milliseconds"></div><span id="poffv" class="small">0 ms</span></details>
    <div id="pxfer" class="small"></div>
    <button id="pleave" class="danger wide">Leave room</button>
   </div>

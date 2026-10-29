@@ -6,7 +6,7 @@ export const q=new URLSearchParams(location.search),KEY="noxy.relay";
 /* Default is the free PeerJS cloud. To use your own server: ?peerhost=example.com&peerport=443&peerpath=/ */
 export const BROKER=q.get("peerhost")?{host:q.get("peerhost"),port:+(q.get("peerport")||443),path:q.get("peerpath")||"/",secure:q.get("peersecure")!=="0"}:{};
 export const P={peer:null,conn:null,conns:new Map(),kinds:new Map(),ms:new Map(),hub:null,isHub:false,me:"",code:"",controller:"",epoch:0,skew:0,rtt:-1,roster:[],samples:[],
- files:new Map(),meta:new Map(),ids:{A:"",B:""},names:{A:"",B:""},asm:new Map(),asked:new Map(),offset:0,lights:{mode:"off",lint:.8},fxLock:false,timer:0,qt:0,gen:0,
+ mem:{A:{},B:{}},files:new Map(),meta:new Map(),ids:{A:"",B:""},names:{A:"",B:""},asm:new Map(),asked:new Map(),offset:0,lights:{mode:"off",lint:.8},fxLock:false,timer:0,qt:0,gen:0,
  label:"Laptop "+(10+Math.floor(Math.random()*90))};
 export const on=()=>!!P.peer&&!!P.me&&(P.isHub||!!P.conn),isCtl=()=>P.controller===P.me;
 export const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));

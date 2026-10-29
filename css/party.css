@@ -38,3 +38,5 @@ details.sub{margin:8px 0;padding-left:2px}details.sub summary{font-weight:500;co
 .ping.good{color:var(--ok)}.ping.ok{color:var(--warn)}.ping.slow{color:var(--bad)}
 #perr{color:#fca5a5;margin:8px 2px}
 #pxfer{min-height:1.2em}
+#psync{min-height:1.2em;margin:-2px 2px 8px;font-weight:600}
+#psync.good{color:var(--ok)}#psync.ok{color:var(--warn)}#psync.slow{color:var(--bad)}
