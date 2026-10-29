@@ -26,3 +26,6 @@ Some networks block direct links. Open Party, then Connection help, and add free
 
 ## Party mode: a friend cannot join or keeps dropping
 Open Party and press Test under Check my connection on that laptop. If it says the shared relay did not answer, add your own free relay under Connection help (see docs/PARTY.md), or switch that laptop to the same Wi-Fi or hotspot as the room creator. The creator should be the laptop with the best internet.
+
+## Party mode: sound is early or late on one laptop
+Look at the line under the room status. If it says In sync, the laptop is within a few milliseconds of the DJ. If the sound is still early or late, a Bluetooth speaker or TV is adding a delay the browser cannot see: move Sync nudge until it lines up. If it keeps saying Adjusting or Catching up, that laptop has a slow or unsteady connection, so try the Check my connection test.

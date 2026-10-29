@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.4.0
+- Much tighter sync: followers match the DJ within about 10 ms in a simulated bad network (the old method: about 115 ms)
+- Followers speed up or slow down by a few percent to line up, instead of jumping, so there are no clicks or skips
+- Laptops allow for their own speaker delay when the browser can tell
+- A live readout under the room status: In sync, Adjusting or Catching up
+- Sync nudge now covers 500 ms earlier or later, in 5 ms steps
+
 ## 2.3.0
 - Party mode works for friends in different places: a free shared relay steps in when a direct link fails, with your own relay or provider link as the better option
 - Laptops reconnect by themselves after a drop, the list shows each friend's delay and whether they are direct or via relay, and Check my connection explains what your network can do
